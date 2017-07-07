@@ -18,6 +18,12 @@ const dissassembler = function(file) {
 
     const opcode = mem[pc] << 8 | mem[pc + 1];
     console.log(`Received: ${opcode}`);
+
+    switch (opcode) {
+      case 0x00E0: console.log('clear'); break;
+      case 0x00EE: console.log('return'); break;
+      default:
+    }
     
     switch (opcode & 0xF000) {
       case 0x1000: console.log('jmp'); break;
