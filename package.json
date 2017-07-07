@@ -1,0 +1,19 @@
+{
+  "name": "chipper",
+  "version": "0.0.1",
+  "description": "CHIP-8 interpreter",
+  "main": "src/chip8.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/mattcan/chip8-nodejs"
+  },
+  "keywords": [
+    "chip8",
+    "emulator"
+  ],
+  "author": "Matthew Cantelon",
+  "license": "GPL-3.0"
+}
