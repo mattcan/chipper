@@ -24,10 +24,24 @@ const FONT_SPRITES = [
   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 ];
 
+const loadToMemory = function(memory, data, offset = 0) {
+  const modifiedMemory = memory;
+  for (let i = 0; i < data.length; i += 1) {
+    if (i >= memory.length) {
+      throw new Error('Data longer than available memory');
+    }
+
+    modifiedMemory[i + offset] = data[i];
+  }
+
+  return modifiedMemory;
+};
+
 const dissassembler = function(file) {
-  const bufferMemory = Buffer.alloc(512);
-  const mem = Buffer.concat([bufferMemory, file]);
-  console.log(`Memory: ${mem.toString('hex')}`);
+  let bufferMemory = Buffer.alloc(4096);
+  bufferMemory = loadToMemory(bufferMemory, FONT_SPRITES);
+  bufferMemory = loadToMemory(bufferMemory, file, 512);
+  console.log(`Memory: ${bufferMemory.toString('hex')}`);
 
   let pc = 0x200;
   let run = true;
@@ -35,8 +49,10 @@ const dissassembler = function(file) {
   while (run) {
     console.log(`Current PC: ${pc}`);
 
-    const opcode = mem[pc] << 8 | mem[pc + 1];
+    const opcode = bufferMemory[pc] << 8 | bufferMemory[pc + 1];
     console.log(`Received: 0x${opcode.toString(16).toUpperCase()}`);
+
+    if ((opcode & 0xFFFF) === 0x0000) { run = false; }
 
     switch (opcode & 0xF000) {
       case 0x0000:
@@ -84,15 +100,15 @@ const dissassembler = function(file) {
 
       case 0xF000:
         switch (opcode & 0x00FF) {
-          case 0x0007: console.log('LD Vx, DT');
-          case 0x000A: console.log('LD Vx, K');
-          case 0x0015: console.log('LD DT, Vx');
-          case 0x0018: console.log('LD ST, Vx');
-          case 0x001E: console.log('ADD I, Vx');
-          case 0x0029: console.log('LD F, Vx');
-          case 0x0033: console.log('LD B, Vx');
-          case 0x0055: console.log('LD [I], Vx');
-          case 0x0065: console.log('LD Vx, [I]');
+          case 0x0007: console.log('LD Vx, DT'); break;
+          case 0x000A: console.log('LD Vx, K'); break;
+          case 0x0015: console.log('LD DT, Vx'); break;
+          case 0x0018: console.log('LD ST, Vx'); break;
+          case 0x001E: console.log('ADD I, Vx'); break;
+          case 0x0029: console.log('LD F, Vx'); break;
+          case 0x0033: console.log('LD B, Vx'); break;
+          case 0x0055: console.log('LD [I], Vx'); break;
+          case 0x0065: console.log('LD Vx, [I]'); break;
         }
         break;
       default: console.log('unknown');
@@ -101,7 +117,7 @@ const dissassembler = function(file) {
     console.log('---');
 
     pc += 2;
-    if (pc >= mem.length) {
+    if (pc >= bufferMemory.length) {
       run = false;
     }
   }
@@ -111,4 +127,4 @@ const loadFile = function(fileName) {
   return fs.readFileSync(fileName);
 };
 
-dissassembler(loadFile('../roms/GAMES/GUESS'));
+dissassembler(loadFile('../roms/GAMES/PONG'));
