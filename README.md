@@ -1,5 +1,4 @@
-# Chipper [![Build
-Status](https://travis-ci.org/mattcan/chipper.svg?branch=master)](https://travis-ci.org/mattcan/chipper)
+# Chipper [![Build Status](https://travis-ci.org/mattcan/chipper.svg?branch=master)](https://travis-ci.org/mattcan/chipper)
 
 A CHIP-8 interpreter written in NodeJS and licensed under the GPL-3.0.
 
