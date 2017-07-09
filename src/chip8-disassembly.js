@@ -37,7 +37,7 @@ const loadToMemory = function(memory, data, offset = 0) {
   return modifiedMemory;
 };
 
-const dissassembler = function(file) {
+const disassembler = function(file) {
   let bufferMemory = Buffer.alloc(4096);
   bufferMemory = loadToMemory(bufferMemory, FONT_SPRITES);
   bufferMemory = loadToMemory(bufferMemory, file, 512);
@@ -127,4 +127,6 @@ const loadFile = function(fileName) {
   return fs.readFileSync(fileName);
 };
 
-dissassembler(loadFile('../roms/GAMES/PONG'));
+module.exports = disassembler;
+
+// dissassembler(loadFile('../roms/GAMES/PONG'));
