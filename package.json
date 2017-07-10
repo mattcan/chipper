@@ -5,11 +5,12 @@
   "main": "src/chip8.js",
   "scripts": {
     "start": "node chip8.js",
-    "test": "jasmine"
+    "test": "jasmine",
+    "update-contrib": "weallcontribute -o .github/CONTRIBUTING.md && git add .github/CONTRIBUTING.md"
   },
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/mattcan/chip8-nodejs"
+    "url": "https://github.com/mattcan/chipper"
   },
   "keywords": [
     "chip8",
@@ -18,6 +19,7 @@
   "author": "Matthew Cantelon",
   "license": "GPL-3.0",
   "devDependencies": {
-    "jasmine": "^2.6.0"
+    "jasmine": "^2.6.0",
+    "weallcontribute": "^1.0.8"
   }
 }
