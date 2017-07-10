@@ -3,6 +3,7 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
+
 // TODO import main routine
 const disassembler = require('./src/chip8-disassembly');
 const fs = require('fs');
@@ -10,7 +11,7 @@ const FILE_PATH_POSITION = 2;
 
 
 if (process.argv.length !== 3) {
-  console.log('How to use: npm start <path to rom>');
+  console.log('How to use: node chip8.js <path to rom>');
   process.exit(1);
 }
 
