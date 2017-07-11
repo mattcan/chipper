@@ -4,11 +4,10 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 
-// TODO import main routine
-const disassembler = require('./src/chip8-disassembly');
+const main = require('./src/main');
 const fs = require('fs');
-const FILE_PATH_POSITION = 2;
 
+const FILE_PATH_POSITION = 2;
 
 if (process.argv.length !== 3) {
   console.log('How to use: node chip8.js <path to rom>');
@@ -24,5 +23,4 @@ try {
   process.exit(2);
 }
 
-// TODO call main function
-disassembler(fileData);
+main(fileData);

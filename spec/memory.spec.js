@@ -24,4 +24,9 @@ describe('Memory', () => {
     expect(memory.buf[0x201]).toBe(0xE0);
   });
 
+  it('gets memory at specific location', () => {
+    memory.loadProgram([0x00, 0xE0, 0x12, 0x00]);
+    expect(memory.getAt(0x201)).toBe(0xE0);
+  });
+
 });

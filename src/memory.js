@@ -49,6 +49,14 @@ const memory = {
 
   loadProgram: function (program) {
     this.buf = loadToMemory(this.buf, program, PROGRAM_OFFSET);
+  },
+
+  getAt: function (loc) {
+    return this.buf[loc];
+  },
+
+  size: function () {
+    return this.buf.length;
   }
 };
 
