@@ -7,7 +7,7 @@
 const MAX_MEMORY_SIZE = 4096;
 const PROGRAM_OFFSET = 0x200;
 const STACK_POINTER_START = 0x1DE;
-const STACK_POINTER_END = 0x1FF;
+const STACK_POINTER_END = 0x1FE;
 
 const FONT_SPRITES = [
   0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -71,13 +71,17 @@ const memory = {
     memParent: null,
     pointer: 0x0,
 
-    push: function (address) {
-      // console.log((address & 0x00FF).toString(16), (address & 0xFF00).toString(16));
-      // console.log(this.pointer.toString(16));
-      console.log(this.memParent.buf[this.pointer].toString(16));
-      this.memParent.buf[this.pointer] = address & 0xFF00;
-      console.log(this.memParent.buf[this.pointer].toString(16));
-      this.memParent.buf[this.pointer + 1] = (address & 0x00FF);
+    push: function (value) {
+      if (this.pointer >= STACK_POINTER_END) {
+        throw Error('Stack is full');
+      }
+
+      const firstByte = (value & 0xFF00) >> 4;
+      const secondByte = value & 0x00FF;
+
+      this.memParent.setByte(firstByte, this.pointer);
+      this.memParent.setByte(secondByte, this.pointer + 1);
+
       this.pointer += 2;
     },
 /*

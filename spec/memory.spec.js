@@ -47,11 +47,22 @@ describe('Memory', () => {
 
   describe('Stack', () => {
 
-    xit('can push a value', () => {
+    it('can push a value', () => {
       memory.initialize();
       memory.stack.push(0x201);
-      console.log(memory.buf[0x1DE].toString(16), memory.buf[0x1DF], memory.stack.memParent.buf[0x1DE]);
+
       expect(memory.buf[0x1DE]).toBe(0x20);
+    });
+
+    it('throws an error when pushing more than 16 values', () => {
+      memory.initialize();
+      for(let i = 0; i < 16; i += 1) {
+        memory.stack.push(0x20 | i);
+      }
+
+      expect(function () {
+        memory.stack.push(0xAA);
+      }).toThrow();
     });
   });
 });
