@@ -29,6 +29,22 @@ describe('Memory', () => {
     expect(memory.getAt(0x201)).toBe(0xE0);
   });
 
+  it('can set a byte at specific location', () => {
+    memory.initialize();
+    expect(memory.buf[0]).toBe(0xF0);
+
+    memory.setByte(0xA0, 0);
+    expect(memory.buf[0]).toBe(0xA0);
+  });
+
+  it('fails when setting more than a byte', () => {
+    memory.initialize();
+    expect(memory.buf[0]).toBe(0xF0);
+
+    memory.setByte(0x200, 0);
+    expect(memory.buf[0]).toBe(0x0);
+  });
+
   describe('Stack', () => {
 
     xit('can push a value', () => {

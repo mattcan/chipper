@@ -51,6 +51,10 @@ const memory = {
     this.stack.pointer = STACK_POINTER_START;
   },
 
+  setByte: function (value, offset) {
+    this.buf[offset] = value;
+  },
+
   loadProgram: function (program) {
     this.buf = loadToMemory(this.buf, program, PROGRAM_OFFSET);
   },
