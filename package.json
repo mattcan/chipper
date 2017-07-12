@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node chip8.js",
     "test": "jasmine",
+    "test:watch": "nodemon --exec jasmine",
     "update-contrib": "weallcontribute -o .github/CONTRIBUTING.md && git add .github/CONTRIBUTING.md"
   },
   "repository": {
@@ -20,6 +21,7 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "jasmine": "^2.6.0",
+    "nodemon": "^1.11.0",
     "weallcontribute": "^1.0.8"
   }
 }
