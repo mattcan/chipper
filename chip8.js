@@ -5,12 +5,13 @@
  **/
 
 const main = require('./src/main');
+const disassembler = require('./src/chip8-disassembly');
 const fs = require('fs');
 
-const FILE_PATH_POSITION = 2;
+const FILE_PATH_POSITION = 3;
 
-if (process.argv.length !== 3) {
-  console.log('How to use: node chip8.js <path to rom>');
+if (process.argv.length !== 4) {
+  console.log('How to use: node chip8.js <command> <path to rom>');
   process.exit(1);
 }
 
@@ -23,4 +24,9 @@ try {
   process.exit(2);
 }
 
-main(fileData);
+switch (process.argv[2]) {
+  case 'vm': main(fileData); break;
+  case 'ds':
+  case 'disassemble': disassembler(fileData); break;
+  default: console.log('fudge'); break;
+}
