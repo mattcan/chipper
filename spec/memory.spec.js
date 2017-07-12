@@ -64,5 +64,16 @@ describe('Memory', () => {
         memory.stack.push(0xAA);
       }).toThrow();
     });
+
+    it('returns the last item placed onto the stack', () => {
+      memory.initialize();
+      memory.stack.push(0x231);
+      expect(memory.buf[0x1DE]).toBe(0x20);
+      expect(memory.buf[0x1DF]).toBe(0x31);
+
+      const value = memory.stack.pop();
+      expect(value).toBe(0x231);
+    });
+
   });
 });

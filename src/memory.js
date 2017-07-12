@@ -84,13 +84,16 @@ const memory = {
 
       this.pointer += 2;
     },
-/*
+
     pop: function () {
-      const address = this.buf[this.pointer] << 8 | this.buf[this.pointer + 1];
       this.pointer -= 2;
-      return address;
+
+      const firstByte = this.memParent.getAt(this.pointer) << 4;
+      const secondByte = this.memParent.getAt(this.pointer + 1);
+
+      return firstByte | secondByte;
     }
-*/
+
   }
 };
 
