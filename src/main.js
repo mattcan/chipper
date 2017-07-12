@@ -16,6 +16,16 @@ const getOpcode = function (programCounter) {
   return memory.getAt(programCounter) << 8 | memory.getAt(programCounter + 1);
 };
 
+const getVariables = function (opcode) {
+  return {
+    nnn: (opcode & 0x0FFF),
+    n: (opcode & 0x000F),
+    x: (opcode & 0x0F00) >> 8,
+    y: (opcode & 0x00F0) >> 4,
+    kk: (opcode & 0x00FF)
+  };
+};
+
 const isNull = function (opcode) {
   return (opcode & 0xFFFF) === 0x0000;
 };
@@ -29,7 +39,11 @@ const main = function (program) {
     const opcode = getOpcode(pc);
     if (isNull(opcode)) { break; }
 
+    const variables = getVariables(opcode);
+
     console.log(`0x${opcode.toString(16)}`);
+    console.log(variables);
+    console.log('----');
 
     pc += 2;
     if (pc >= memory.size) {
