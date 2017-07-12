@@ -29,4 +29,13 @@ describe('Memory', () => {
     expect(memory.getAt(0x201)).toBe(0xE0);
   });
 
+  describe('Stack', () => {
+
+    xit('can push a value', () => {
+      memory.initialize();
+      memory.stack.push(0x201);
+      console.log(memory.buf[0x1DE].toString(16), memory.buf[0x1DF], memory.stack.memParent.buf[0x1DE]);
+      expect(memory.buf[0x1DE]).toBe(0x20);
+    });
+  });
 });

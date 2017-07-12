@@ -5,7 +5,9 @@
  **/
 
 const MAX_MEMORY_SIZE = 4096;
-const PROGRAM_OFFSET = 512;
+const PROGRAM_OFFSET = 0x200;
+const STACK_POINTER_START = 0x1DE;
+const STACK_POINTER_END = 0x1FF;
 
 const FONT_SPRITES = [
   0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -45,6 +47,8 @@ const memory = {
   initialize: function () {
     this.buf = Buffer.alloc(MAX_MEMORY_SIZE);
     this.buf = loadToMemory(this.buf, FONT_SPRITES);
+    this.stack.memParent = this;
+    this.stack.pointer = STACK_POINTER_START;
   },
 
   loadProgram: function (program) {
@@ -57,6 +61,28 @@ const memory = {
 
   size: function () {
     return this.buf.length;
+  },
+
+  stack: {
+    memParent: null,
+    pointer: 0x0,
+
+    push: function (address) {
+      // console.log((address & 0x00FF).toString(16), (address & 0xFF00).toString(16));
+      // console.log(this.pointer.toString(16));
+      console.log(this.memParent.buf[this.pointer].toString(16));
+      this.memParent.buf[this.pointer] = address & 0xFF00;
+      console.log(this.memParent.buf[this.pointer].toString(16));
+      this.memParent.buf[this.pointer + 1] = (address & 0x00FF);
+      this.pointer += 2;
+    },
+/*
+    pop: function () {
+      const address = this.buf[this.pointer] << 8 | this.buf[this.pointer + 1];
+      this.pointer -= 2;
+      return address;
+    }
+*/
   }
 };
 
