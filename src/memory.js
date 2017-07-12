@@ -28,43 +28,40 @@ const FONT_SPRITES = [
   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 ];
 
-const loadToMemory = function(memory, data, offset = 0) {
-  const modifiedMemory = memory;
-  for (let i = 0; i < data.length; i += 1) {
-    if (i >= memory.length) {
-      throw new Error('Data longer than available memory');
-    }
-
-    modifiedMemory[i + offset] = data[i];
-  }
-
-  return modifiedMemory;
-};
-
 const memory = {
-  buf: [],
+  _buf: [],
+
+  _loadToMemory:  function(data, offset = 0) {
+    for (let i = 0; i < data.length; i += 1) {
+      if (i >= this._buf.length) {
+        throw new Error('Data longer than available memory');
+      }
+
+      this._buf[i + offset] = data[i];
+    }
+  },
 
   initialize: function () {
-    this.buf = Buffer.alloc(MAX_MEMORY_SIZE);
-    this.buf = loadToMemory(this.buf, FONT_SPRITES);
+    this._buf = Buffer.alloc(MAX_MEMORY_SIZE);
+    this._loadToMemory(FONT_SPRITES);
     this.stack.memParent = this;
     this.stack.pointer = STACK_POINTER_START;
   },
 
   setByte: function (value, offset) {
-    this.buf[offset] = value;
+    this._buf[offset] = value;
   },
 
   loadProgram: function (program) {
-    this.buf = loadToMemory(this.buf, program, PROGRAM_OFFSET);
+    this._loadToMemory(program, PROGRAM_OFFSET);
   },
 
   getAt: function (loc) {
-    return this.buf[loc];
+    return this._buf[loc];
   },
 
   size: function () {
-    return this.buf.length;
+    return this._buf.length;
   },
 
   stack: {
