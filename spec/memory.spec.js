@@ -26,14 +26,14 @@ describe('Memory', () => {
 
   it('gets memory at specific location', () => {
     memory.loadProgram([0x00, 0xE0, 0x12, 0x00]);
-    expect(memory.getAt(0x201)).toBe(0xE0);
+    expect(memory._getAt(0x201)).toBe(0xE0);
   });
 
   it('can set a byte at specific location', () => {
     memory.initialize();
     expect(memory._buf[0]).toBe(0xF0);
 
-    memory.setByte(0xA0, 0);
+    memory._setAt(0, 0xA0);
     expect(memory._buf[0]).toBe(0xA0);
   });
 
@@ -41,7 +41,7 @@ describe('Memory', () => {
     memory.initialize();
     expect(memory._buf[0]).toBe(0xF0);
 
-    memory.setByte(0x200, 0);
+    memory._setAt(0, 0x200);
     expect(memory._buf[0]).toBe(0x0);
   });
 

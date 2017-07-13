@@ -41,6 +41,14 @@ const memory = {
     }
   },
 
+  _setAt: function (offset, value) {
+    this._buf[offset] = value;
+  },
+
+  _getAt: function (offset) {
+    return this._buf[offset];
+  },
+
   initialize: function () {
     this._buf = Buffer.alloc(MAX_MEMORY_SIZE);
     this._loadToMemory(FONT_SPRITES);
@@ -48,16 +56,8 @@ const memory = {
     this.stack.pointer = STACK_POINTER_START;
   },
 
-  setByte: function (value, offset) {
-    this._buf[offset] = value;
-  },
-
   loadProgram: function (program) {
     this._loadToMemory(program, PROGRAM_OFFSET);
-  },
-
-  getAt: function (loc) {
-    return this._buf[loc];
   },
 
   size: function () {
@@ -76,8 +76,8 @@ const memory = {
       const firstByte = (value & 0xFF00) >> 4;
       const secondByte = value & 0x00FF;
 
-      this.memParent.setByte(firstByte, this.pointer);
-      this.memParent.setByte(secondByte, this.pointer + 1);
+      this.memParent._setAt(this.pointer, firstByte);
+      this.memParent._setAt(this.pointer + 1, secondByte);
 
       this.pointer += 2;
     },
@@ -85,8 +85,8 @@ const memory = {
     pop: function () {
       this.pointer -= 2;
 
-      const firstByte = this.memParent.getAt(this.pointer) << 4;
-      const secondByte = this.memParent.getAt(this.pointer + 1);
+      const firstByte = this.memParent._getAt(this.pointer) << 4;
+      const secondByte = this.memParent._getAt(this.pointer + 1);
 
       return firstByte | secondByte;
     }
