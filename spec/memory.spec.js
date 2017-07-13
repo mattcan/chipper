@@ -3,7 +3,7 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
-
+const OutOfBounds = require('../src/exceptions/OutOfBounds');
 const memory = require('../src/memory');
 
 describe('Memory', () => {
@@ -47,6 +47,11 @@ describe('Memory', () => {
 
   describe('Stack', () => {
 
+    it('is empty after initialization', () => {
+      memory.initialize();
+      expect(memory.stack.isEmpty()).toBe(true);
+    });
+
     it('can push a value', () => {
       memory.initialize();
       memory.stack.push(0x201);
@@ -62,7 +67,7 @@ describe('Memory', () => {
 
       expect(function () {
         memory.stack.push(0xAA);
-      }).toThrow();
+      }).toThrowError(OutOfBounds);
     });
 
     it('returns the last item placed onto the stack', () => {
@@ -73,6 +78,13 @@ describe('Memory', () => {
 
       const value = memory.stack.pop();
       expect(value).toBe(0x231);
+    });
+
+    it('throws an error when popping an empty array', () => {
+      memory.initialize();
+      expect(function () {
+        memory.stack.pop();
+      }).toThrowError(OutOfBounds);
     });
 
   });

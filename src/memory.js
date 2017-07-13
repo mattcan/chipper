@@ -3,6 +3,7 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
+const OutOfBounds = require('./exceptions/OutOfBounds');
 
 const MAX_MEMORY_SIZE = 4096;
 const PROGRAM_OFFSET = 0x200;
@@ -70,7 +71,7 @@ const memory = {
 
     push: function (value) {
       if (this.pointer >= STACK_POINTER_END) {
-        throw Error('Stack is full');
+        throw new OutOfBounds('Stack is full');
       }
 
       const firstByte = (value & 0xFF00) >> 4;
@@ -83,12 +84,20 @@ const memory = {
     },
 
     pop: function () {
+      if (this.isEmpty()) {
+        throw new OutOfBounds('Stack is empty');
+      }
+
       this.pointer -= 2;
 
       const firstByte = this.memParent._getAt(this.pointer) << 4;
       const secondByte = this.memParent._getAt(this.pointer + 1);
 
       return firstByte | secondByte;
+    },
+
+    isEmpty: function () {
+      return this.pointer === STACK_POINTER_START;
     }
 
   }
