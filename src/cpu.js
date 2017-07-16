@@ -6,27 +6,31 @@
 const PROGRAM_START = 0x200;
 
 module.exports = {
-  _pc: 0,
 
+  // Create all the private variables
   initialize: function () {
     this._vReg = Buffer.alloc(8);
     this._flag = false;
     this._iReg = Buffer.alloc(2);
     this._sound = Buffer.alloc(1);
     this._halt = Buffer.alloc(1);
-    this._pc = PROGRAM_START;
+    this.pc._pointer = PROGRAM_START;
   },
 
-  getPC: function () {
-    return this._pc;
-  },
+  pc: {
+    _pointer: null,
 
-  setPC: function (address) {
-    this._pc = address;
-    return this._pc;
-  },
+    get: function () {
+      return this._pointer;
+    },
 
-  next: function () {
-    return this.setPC(this._pc + 2);
+    set: function (address) {
+      this._pointer = address;
+      return this._pointer;
+    },
+
+    next: function () {
+      return this.set(this._pointer + 2);
+    }
   }
 };
