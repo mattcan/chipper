@@ -16,7 +16,7 @@ const getOpcode = function (programCounter) {
   return memory.getAt(programCounter) << 8 | memory.getAt(programCounter + 1);
 };
 
-const getVariables = function (opcode) {
+const getArguments = function (opcode) {
   return {
     nnn: (opcode & 0x0FFF),
     n: (opcode & 0x000F),
@@ -39,10 +39,10 @@ const main = function (program) {
     const opcode = getOpcode(pc);
     if (isNull(opcode)) { break; }
 
-    const variables = getVariables(opcode);
+    const args = getArguments(opcode);
 
     console.log(`0x${opcode.toString(16)}`);
-    console.log(variables);
+    console.log(args);
     console.log('----');
 
     pc += 2;
