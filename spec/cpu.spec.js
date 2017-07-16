@@ -16,4 +16,26 @@ describe('CPU', () => {
     expect(cpu._halt.length).toBe(1);
   });
 
+  it('will return current PC', () => {
+    cpu.initialize();
+    expect(cpu.getPC()).toBe(0x200);
+  });
+
+  it('will set the PC to 0x300', () => {
+    cpu.initialize();
+    expect(cpu._pc).toBe(0x200);
+
+    cpu.setPC(0x300);
+    expect(cpu._pc).toBe(0x300);
+  });
+
+  it('will continue to the next address', () => {
+    cpu.initialize();
+    expect(cpu._pc).toBe(0x200);
+
+    const nextAddress = cpu.next();
+    expect(nextAddress).toBe(0x202);
+    expect(cpu._pc).toBe(0x202);
+  });
+
 });
