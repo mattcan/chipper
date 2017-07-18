@@ -65,6 +65,20 @@ const memory = {
     return this._buf.length;
   },
 
+  opCode: function (pc) {
+    return this._getAt(pc) << 8 | this._getAt(pc + 1);
+  },
+
+  opArguments: function (opCode) {
+    return {
+      nnn: (opCode & 0x0FFF),
+      n: (opCode & 0x000F),
+      x: (opCode & 0x0F00) >> 8,
+      y: (opCode & 0x00F0) >> 4,
+      kk: (opCode & 0x00FF)
+    };
+  },
+
   stack: {
     memParent: null,
     pointer: 0x0,

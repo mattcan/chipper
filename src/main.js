@@ -4,26 +4,13 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 const memory = require('./memory');
-
-const PROGRAM_COUNTER_START = 0x200;
+const cpu = require('./cpu');
 
 const init = function (program) {
   memory.initialize();
   memory.loadProgram(program);
-};
 
-const getOpcode = function (programCounter) {
-  return memory.getAt(programCounter) << 8 | memory.getAt(programCounter + 1);
-};
-
-const getArguments = function (opcode) {
-  return {
-    nnn: (opcode & 0x0FFF),
-    n: (opcode & 0x000F),
-    x: (opcode & 0x0F00) >> 8,
-    y: (opcode & 0x00F0) >> 4,
-    kk: (opcode & 0x00FF)
-  };
+  cpu.initialize(null);
 };
 
 const isNull = function (opcode) {
@@ -33,19 +20,19 @@ const isNull = function (opcode) {
 const main = function (program) {
   init(program);
 
-  let pc = PROGRAM_COUNTER_START;
+  let pc = cpu.pc.get();
   let run = true;
   while (run) {
-    const opcode = getOpcode(pc);
+    const opcode = memory.opCode(pc);
     if (isNull(opcode)) { break; }
 
-    const args = getArguments(opcode);
+    const args = memory.opArguments(opcode);
 
     console.log(`0x${opcode.toString(16)}`);
     console.log(args);
     console.log('----');
 
-    pc += 2;
+    pc = cpu.pc.next();
     if (pc >= memory.size) {
       run = false;
     }
