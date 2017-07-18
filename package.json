@@ -22,6 +22,7 @@
   "devDependencies": {
     "jasmine": "^2.6.0",
     "nodemon": "^1.11.0",
+    "sinon": "^2.3.8",
     "weallcontribute": "^1.0.8"
   }
 }
