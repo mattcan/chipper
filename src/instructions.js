@@ -5,11 +5,18 @@
  **/
 
 module.exports = {
-  initialize: function (cpu) {
+  initialize: function (cpu, memory) {
     this._cpu = cpu;
+    this._memory = memory;
   },
 
   jp: function (address) {
     return this._cpu.pc.set(address);
-  }
+  },
+
+  call: function (address) {
+    this._memory.stack.push(this._cpu.pc.get());
+    return this._cpu.pc.set(address);
+  },
+
 };

@@ -12,10 +12,6 @@ const demoProgram = Buffer.from([
 
 describe('Memory', () => {
 
-  it('has an empty buffer', () => {
-    expect(memory._buf).toEqual([]);
-  });
-
   it('is initialized', () => {
     memory.initialize();
     expect(memory._buf.length).toBe(4096);

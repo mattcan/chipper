@@ -5,6 +5,7 @@
  **/
 const sinon = require('sinon');
 const cpu = require('../src/cpu');
+const memory = require('../src/memory');
 const instructions = require('../src/instructions');
 
 describe('Instructions', () => {
@@ -20,6 +21,24 @@ describe('Instructions', () => {
     expect(newPC).toBe(0x352);
 
     mock.verify();
+  });
+
+  it('CALL executes subroutine at address', () => {
+    const cpuMock = sinon.mock(cpu.pc);
+    cpuMock.expects("set").once().returns(0x352);
+    const stackSpy = sinon.spy(memory.stack, "push");
+
+    // T_T
+    memory.initialize();
+    cpu.initialize();
+
+    instructions.initialize(cpu, memory);
+
+    const newPC = instructions.call(0x352);
+    expect(newPC).toBe(0x352);
+    expect(memory.stack.push.calledOnce).toBe(true);
+
+    cpuMock.verify();
   });
 
 });
