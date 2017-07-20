@@ -41,4 +41,34 @@ describe('Instructions', () => {
     cpuMock.verify();
   });
 
+  describe('Skip if register equals value', () => {
+
+    it('SE Vx, byte increments counter', () => {
+      const regMock = sinon.mock(cpu.register);
+      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfEqualValue(0, 0xFA);
+      expect(newPC).toBe(0x204);
+
+      regMock.verify();
+    });
+
+    it('SE Vx, byte does nothing', () => {
+      const regMock = sinon.mock(cpu.register);
+      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfEqualValue(0, 0xAA);
+      expect(newPC).toBe(0x202);
+
+      regMock.verify();
+    });
+
+  });
+
 });
