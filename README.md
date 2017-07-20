@@ -7,10 +7,18 @@ A CHIP-8 interpreter written in NodeJS and licensed under the GPL-3.0.
 I haven't had a chance to look into the licensing around ROMs yet so you will
 need to download your own.
 
+## Usage
+
+If you have some ROMs, you can run the VM using the following command:
+
+```sh
+cd /project/directory
+node chip8.js vm path/to/roms/PONG
+```
+
 ## TODO
 
-* Finish the disassembly
-* Start the VM
+[Project Board](https://github.com/mattcan/chipper/projects/1)
 
 ## Sources
 
