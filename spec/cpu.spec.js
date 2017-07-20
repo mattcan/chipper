@@ -4,16 +4,47 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 const cpu = require('../src/cpu');
+const OutOfBounds = require('../src/exceptions/OutOfBounds');
 
 describe('CPU', () => {
 
   it('will initialize registers', () => {
     cpu.initialize();
-    expect(cpu._vReg.length).toBe(8);
+    expect(cpu.register._vReg.length).toBe(16);
     expect(cpu._flag).toBe(false);
     expect(cpu._iReg.length).toBe(2);
     expect(cpu._sound.length).toBe(1);
     expect(cpu._halt.length).toBe(1);
+  });
+
+  describe('Registers', () => {
+
+    it('will get register zero', () => {
+      cpu.initialize();
+      expect(cpu.register.get(0)).toBe(0x00);
+    });
+
+    it('will throw an error when out of bounds', () => {
+      cpu.initialize();
+      expect(cpu.register.get(0xF)).toBe(0x00);
+      expect(function () {
+        cpu.register.get(0x10);
+      }).toThrowError(OutOfBounds);
+    });
+
+    it('will set register zero to 0x01', () => {
+      cpu.initialize();
+      cpu.register.set(0, 0x01);
+      expect(cpu.register._vReg[0]).toBe(0x01);
+    });
+
+    it('will throw an error when setting register 17 (non-existant)', () => {
+      cpu.initialize();
+      expect(function () {
+        cpu.register.set(0x10, 0xF1);
+      }).toThrowError(OutOfBounds);
+    });
+
   });
 
   describe('Program Counter', () => {

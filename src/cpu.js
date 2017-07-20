@@ -3,18 +3,38 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
+const OutOfBounds = require('./exceptions/OutOfBounds');
+
 const PROGRAM_START = 0x200;
 
 module.exports = {
 
   // Create all the private variables
   initialize: function () {
-    this._vReg = Buffer.alloc(8);
+    this.register._vReg = Buffer.alloc(16);
     this._flag = false;
     this._iReg = Buffer.alloc(2);
     this._sound = Buffer.alloc(1);
     this._halt = Buffer.alloc(1);
     this.pc._pointer = PROGRAM_START;
+  },
+
+  register: {
+    get: function (index) {
+      if (index >= this._vReg.length) {
+        throw new OutOfBounds('Register only has 16 spaces');
+      }
+
+      return this._vReg[index];
+    },
+
+    set: function (index, value) {
+      if (index >= this._vReg.length) {
+        throw new OutOfBounds('Cannot set undefined register');
+      }
+
+      this._vReg[index] = value;
+    }
   },
 
   pc: {
