@@ -43,60 +43,56 @@ describe('Instructions', () => {
 
   describe('Skip if register equals value', () => {
 
-    it('SE Vx, byte increments counter', () => {
-      const regMock = sinon.mock(cpu.register);
+    let regMock = null;
+
+    beforeEach(() => {
+      regMock = sinon.mock(cpu.register);
       regMock.expects("get").once().withExactArgs(0).returns(0xFA);
       cpu.pc._pointer = 0x200;
 
       instructions.initialize(cpu, null);
+    });
 
-      const newPC = instructions.skipIfValueEqual(0, 0xFA);
-      expect(newPC).toBe(0x204);
-
+    afterEach(() => {
       regMock.verify();
     });
 
+    it('SE Vx, byte increments counter', () => {
+      const newPC = instructions.skipIfValueEqual(0, 0xFA);
+      expect(newPC).toBe(0x204);
+    });
+
     it('SE Vx, byte does nothing', () => {
-      const regMock = sinon.mock(cpu.register);
-      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
-      cpu.pc._pointer = 0x200;
-
-      instructions.initialize(cpu, null);
-
       const newPC = instructions.skipIfValueEqual(0, 0xAA);
       expect(newPC).toBe(0x202);
-
-      regMock.verify();
     });
 
   });
 
   describe('Skip if register x does not equal value', () => {
 
-    it('SNE Vx, byte skips next instruction', () => {
-      const regMock = sinon.mock(cpu.register);
+    let regMock = null;
+
+    beforeEach(() => {
+      regMock = sinon.mock(cpu.register);
       regMock.expects("get").once().withExactArgs(0).returns(0xFA);
       cpu.pc._pointer = 0x200;
 
       instructions.initialize(cpu, null);
+    });
 
-      const newPC = instructions.skipIfValueNotEqual(0, 0xAA);
-      expect(newPC).toBe(0x204);
-
+    afterEach(() => {
       regMock.verify();
     });
 
+    it('SNE Vx, byte skips next instruction', () => {
+      const newPC = instructions.skipIfValueNotEqual(0, 0xAA);
+      expect(newPC).toBe(0x204);
+    });
+
     it('SNE Vx, byte continues to next instruction', () => {
-      const regMock = sinon.mock(cpu.register);
-      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
-      cpu.pc._pointer = 0x200;
-
-      instructions.initialize(cpu, null);
-
       const newPC = instructions.skipIfValueNotEqual(0, 0xFA);
       expect(newPC).toBe(0x202);
-
-      regMock.verify();
     });
 
   });
