@@ -97,4 +97,35 @@ describe('Instructions', () => {
 
   });
 
+  describe('Skip if registers are equal', () => {
+
+    it('Skips next instruction', () => {
+      const regMock = sinon.mock(cpu.register);
+      regMock.expects("get").atMost(2).returns(0xFA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfRegistersEqual(0, 1);
+      expect(cpu.pc._pointer).toBe(0x204);
+
+      regMock.verify();
+    });
+
+    it('Continues to next instruction', () => {
+      const regStub = sinon.stub(cpu.register, "get");
+      regStub
+        .onFirstCall().returns(0xFA)
+        .onSecondCall().returns(0xAA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfRegistersEqual(0, 1);
+      expect(cpu.pc._pointer).toBe(0x202);
+      expect(regStub.calledTwice).toBe(true);
+    });
+
+  });
+
 });

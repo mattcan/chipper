@@ -37,6 +37,17 @@ module.exports = {
     }
 
     return this._cpu.pc.next();
+  },
+
+  skipIfRegistersEqual: function (regOne, regTwo) {
+    const regOneValue = this._cpu.register.get(regOne);
+    const regTwoValue = this._cpu.register.get(regTwo);
+
+    if (regOneValue === regTwoValue) {
+      this._cpu.pc.next();
+    }
+
+    return this._cpu.pc.next();
   }
 
 };
