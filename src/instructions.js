@@ -19,10 +19,20 @@ module.exports = {
     return this._cpu.pc.set(address);
   },
 
-  skipIfEqualValue: function (regNumber, value) {
+  skipIfValueEqual: function (regNumber, value) {
     const regValue = this._cpu.register.get(regNumber);
 
     if (regValue === value) {
+      this._cpu.pc.next();
+    }
+
+    return this._cpu.pc.next();
+  },
+
+  skipIfValueNotEqual: function (regNumber, value) {
+    const regValue = this._cpu.register.get(regNumber);
+
+    if (regValue !== value) {
       this._cpu.pc.next();
     }
 

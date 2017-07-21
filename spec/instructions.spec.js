@@ -50,7 +50,7 @@ describe('Instructions', () => {
 
       instructions.initialize(cpu, null);
 
-      const newPC = instructions.skipIfEqualValue(0, 0xFA);
+      const newPC = instructions.skipIfValueEqual(0, 0xFA);
       expect(newPC).toBe(0x204);
 
       regMock.verify();
@@ -63,7 +63,37 @@ describe('Instructions', () => {
 
       instructions.initialize(cpu, null);
 
-      const newPC = instructions.skipIfEqualValue(0, 0xAA);
+      const newPC = instructions.skipIfValueEqual(0, 0xAA);
+      expect(newPC).toBe(0x202);
+
+      regMock.verify();
+    });
+
+  });
+
+  describe('Skip if register x does not equal value', () => {
+
+    it('SNE Vx, byte skips next instruction', () => {
+      const regMock = sinon.mock(cpu.register);
+      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfValueNotEqual(0, 0xAA);
+      expect(newPC).toBe(0x204);
+
+      regMock.verify();
+    });
+
+    it('SNE Vx, byte continues to next instruction', () => {
+      const regMock = sinon.mock(cpu.register);
+      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
+      cpu.pc._pointer = 0x200;
+
+      instructions.initialize(cpu, null);
+
+      const newPC = instructions.skipIfValueNotEqual(0, 0xFA);
       expect(newPC).toBe(0x202);
 
       regMock.verify();
