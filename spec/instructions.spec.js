@@ -107,7 +107,7 @@ describe('Instructions', () => {
       instructions.initialize(cpu, null);
 
       const newPC = instructions.skipIfRegistersEqual(0, 1);
-      expect(cpu.pc._pointer).toBe(0x204);
+      expect(newPC).toBe(0x204);
 
       regMock.verify();
     });
@@ -122,7 +122,7 @@ describe('Instructions', () => {
       instructions.initialize(cpu, null);
 
       const newPC = instructions.skipIfRegistersEqual(0, 1);
-      expect(cpu.pc._pointer).toBe(0x202);
+      expect(newPC).toBe(0x202);
       expect(regStub.calledTwice).toBe(true);
     });
 
