@@ -48,6 +48,11 @@ module.exports = {
     }
 
     return this._cpu.pc.next();
+  },
+
+  insertValueIntoRegister: function (regNumber, value) {
+    this._cpu.register.set(regNumber, value);
+    return this._cpu.pc.next();
   }
 
 };

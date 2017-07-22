@@ -128,4 +128,13 @@ describe('Instructions', () => {
 
   });
 
+  it('Insert value into register', () => {
+    cpu.pc._pointer = 0x200;
+    instructions.initialize(cpu, null);
+
+    const newPC = instructions.insertValueIntoRegister(0, 0xA1);
+    expect(newPC).toBe(0x202);
+    expect(cpu.register._vReg[0]).toBe(0xA1);
+  });
+
 });
