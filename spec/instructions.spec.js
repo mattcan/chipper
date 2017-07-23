@@ -137,4 +137,19 @@ describe('Instructions', () => {
     expect(cpu.register._vReg[0]).toBe(0xA1);
   });
 
+  it('Adds value to register', () => {
+    const mockCPU = { register: { set: () => {} }, pc: {} };
+    mockCPU.register.get = (registerIndex) => { return 0x01; };
+    mockCPU.pc.next = () => { return 0x202; };
+    const regSet = sinon.stub(mockCPU.register, "set");
+
+    instructions.initialize(mockCPU, null);
+
+    const newPC = instructions.addValueToRegister(0, 0x01);
+    expect(newPC).toBe(0x202);
+    expect(regSet.calledOnce).toBe(true);
+
+    regSet.reset();
+  });
+
 });

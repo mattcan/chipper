@@ -53,6 +53,15 @@ module.exports = {
   insertValueIntoRegister: function (regNumber, value) {
     this._cpu.register.set(regNumber, value);
     return this._cpu.pc.next();
+  },
+
+  addValueToRegister: function (regNumber, value) {
+    const regValue = this._cpu.register.get(regNumber);
+    const newValue = regValue + value;
+
+    this._cpu.register.set(regNumber, newValue);
+
+    return this._cpu.pc.next();
   }
 
 };
