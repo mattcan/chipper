@@ -55,6 +55,7 @@ describe('Instructions', () => {
 
     afterEach(() => {
       regMock.verify();
+      regMock.restore();
     });
 
     it('SE Vx, byte increments counter', () => {
@@ -83,6 +84,7 @@ describe('Instructions', () => {
 
     afterEach(() => {
       regMock.verify();
+      regMock.restore();
     });
 
     it('SNE Vx, byte skips next instruction', () => {
@@ -110,6 +112,7 @@ describe('Instructions', () => {
       expect(newPC).toBe(0x204);
 
       regMock.verify();
+      regMock.restore();
     });
 
     it('Continues to next instruction', () => {
@@ -124,6 +127,8 @@ describe('Instructions', () => {
       const newPC = instructions.skipIfRegistersEqual(0, 1);
       expect(newPC).toBe(0x202);
       expect(regStub.calledTwice).toBe(true);
+
+      regStub.reset();
     });
 
   });

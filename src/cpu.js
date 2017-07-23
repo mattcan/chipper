@@ -21,7 +21,7 @@ module.exports = {
 
   register: {
     get: function (index) {
-      if (index >= this._vReg.length) {
+      if (index >= this._vReg.length || index < 0) {
         throw new OutOfBounds('Register only has 16 spaces');
       }
 
@@ -29,7 +29,7 @@ module.exports = {
     },
 
     set: function (index, value) {
-      if (index >= this._vReg.length) {
+      if (index >= this._vReg.length || index < 0) {
         throw new OutOfBounds('Cannot set undefined register');
       }
 
