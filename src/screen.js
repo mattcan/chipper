@@ -6,6 +6,46 @@
 
 const blessed = require('blessed');
 
+const screenBuffer = function () {
+  const buffer = [];
+
+  const initialize = function () {
+    const verticalPixels = 32;
+    const horizontalPixels = 64;
+
+    for (let i = 0; i < verticalPixels; i += 1) {
+
+      const row = [];
+
+      for (let j = 0; j < horizontalPixels; j += 1) {
+        row.push(0);
+      }
+
+      buffer.push(row);
+    }
+
+  };
+
+  const toggle = function (x, y) {
+    if (buffer[x][y] === 0) {
+      buffer[x][y] = 1;
+    } else {
+      buffer[x][y] = 0;
+    }
+  };
+
+  const currentState = function () {
+    return buffer;
+  };
+
+  return {
+    initialize,
+    toggle,
+    currentState
+  };
+
+};
+
 const screen = blessed.screen({
   tput: true,
   smartCSR: true,
