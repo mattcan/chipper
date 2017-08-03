@@ -46,45 +46,58 @@ const screenBuffer = function () {
 
 };
 
-const screen = blessed.screen({
-  tput: true,
-  smartCSR: true,
-  //dump: __dirname + '/../file.log',
-  warnings: true,
-  title: 'Chipper'
-});
+const display = function () {
+  const screen = blessed.screen({
+    tput: true,
+    smartCSR: true,
+    //dump: __dirname + '/../file.log',
+    warnings: true,
+    title: 'Chipper'
+  });
 
-const display = blessed.box({
-  top: 'center',
-  left: 'center',
-  width: '35%',
-  height: '70%',
-  content: 'He {bold}ll{/bold} ooh',
-  tags: true,
-  border: {
-    type: 'line'
-  },
-  style: {
-    fg: 'white',
+  const emulatedDisplay = blessed.box({
+    top: 'center',
+    left: 'center',
+    width: '35%',
+    height: '70%',
+    content: 'He {bold}ll{/bold} ooh',
+    tags: true,
     border: {
-      fg: '#ffffff'
+      type: 'line'
     },
-    hover: {
-      bg: 'green'
-    }
-  },
-  hide: true
-});
+    style: {
+      fg: 'white',
+      border: {
+        fg: '#ffffff'
+      },
+      hover: {
+        bg: 'green'
+      }
+    },
+    hide: true
+  });
 
-screen.append(display);
-display.focus();
-screen.render();
+  const initialize = function () {
+    screen.append(emulatedDisplay);
+    emulatedDisplay.focus();
+    screen.render();
 
-display.key('enter', function(ch, key) {
-  display.setContent('some text');
-  screen.render();
-});
+    emulatedDisplay.key('enter', function(ch, key) {
+      emulatedDisplay.setContent('some text');
+      screen.render();
+    });
 
-screen.key(['escape', 'q', 'C-c'], function (ch, key) {
-  return process.exit();
-});
+    screen.key(['escape', 'q', 'C-c'], function (ch, key) {
+      return process.exit();
+    });
+  };
+
+  const render = function () {};
+
+  return { render };
+};
+
+module.exports = {
+  screenBuffer,
+  display
+};
