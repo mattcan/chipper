@@ -8,22 +8,11 @@ const blessed = require('blessed');
 
 const screenBuffer = function () {
   const buffer = [];
+  const verticalPixels = 32;
+  const horizontalPixels = 64;
 
   const initialize = function () {
-    const verticalPixels = 32;
-    const horizontalPixels = 64;
-
-    for (let i = 0; i < verticalPixels; i += 1) {
-
-      const row = [];
-
-      for (let j = 0; j < horizontalPixels; j += 1) {
-        row.push(0);
-      }
-
-      buffer.push(row);
-    }
-
+    reset();
   };
 
   const toggle = function (x, y) {
@@ -36,6 +25,19 @@ const screenBuffer = function () {
 
   const currentState = function () {
     return buffer;
+  };
+
+  const reset = function () {
+    for (let i = 0; i < verticalPixels; i += 1) {
+
+      const row = [];
+
+      for (let j = 0; j < horizontalPixels; j += 1) {
+        row.push(0);
+      }
+
+      buffer.push(row);
+    }
   };
 
   return {

@@ -5,9 +5,20 @@
  **/
 
 module.exports = {
-  initialize: function (cpu, memory) {
+  initialize: function (cpu, memory, screenBuffer) {
     this._cpu = cpu;
     this._memory = memory;
+    this._screenBuffer = screenBuffer;
+  },
+
+  clearScreen: function () {
+    this._screenBuffer.reset();
+    return this._cpu.pc.next();
+  },
+
+  ret: function () {
+    const returnTo = this._memory.stack.pop();
+    return this._cpu.pc.set(returnTo);
   },
 
   jp: function (address) {
