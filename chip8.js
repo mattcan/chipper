@@ -11,7 +11,7 @@ const fs = require('fs');
 const FILE_PATH_POSITION = 3;
 
 if (process.argv.length !== 4) {
-  console.log('How to use: node chip8.js <command> <path to rom>');
+  console.log('How to use: node chip8.js <vm|ds> <path to rom>');
   process.exit(1);
 }
 
