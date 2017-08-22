@@ -48,7 +48,7 @@ const main = function (program) {
       case 0x1000:
         instructions.jp(args.nnn);
         break;
-      
+
       case 0x2000:
         instructions.call(args.nnn);
         break;
@@ -61,8 +61,66 @@ const main = function (program) {
         instructions.skipIfValueNotEqual(args.x, args.kk);
         break;
 
+      case 0x6000:
+        instructions.insertValueIntoRegister(args.x, args.kk);
+        break;
+
       case 0x7000:
         instructions.addValueToRegister(args.x, args.kk);
+        break;
+
+      case 0x8000:
+        switch (opcode & 0x000F) {
+          case 0x0000:
+            break;
+
+          case 0x0002:
+            break;
+
+          case 0x0004:
+            break;
+
+          case 0x0005:
+            break;
+        }
+        break;
+
+      case 0xA000:
+        break;
+
+      case 0xC000:
+        break;
+
+      case 0xD000:
+        break;
+
+      case 0xE000:
+        switch (opcode & 0x00FF) {
+          case 0x00A1:
+            break;
+        }
+        break;
+
+      case 0xF000:
+        switch (opcode & 0x00FF) {
+          case 0x007:
+            break;
+
+          case 0x0015:
+            break;
+
+          case 0x0018:
+            break;
+
+          case 0x0029:
+            break;
+
+          case 0x0033:
+            break;
+
+          case 0x0065:
+            break;
+        }
         break;
     }
 
