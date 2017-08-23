@@ -25,5 +25,7 @@
     "sinon": "^2.3.8",
     "weallcontribute": "^1.0.8"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axel": "0.0.3"
+  }
 }
