@@ -4,7 +4,6 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 
-const blessed = require('blessed');
 
 const screenBuffer = function () {
   const buffer = [];
@@ -49,54 +48,32 @@ const screenBuffer = function () {
 };
 
 const display = function () {
-  const screen = blessed.screen({
-    tput: true,
-    smartCSR: true,
-    //dump: __dirname + '/../file.log',
-    warnings: true,
-    title: 'Chipper'
-  });
 
-  const emulatedDisplay = blessed.box({
-    top: 'center',
-    left: 'center',
-    width: '35%',
-    height: '70%',
-    content: 'He {bold}ll{/bold} ooh',
-    tags: true,
-    border: {
-      type: 'line'
-    },
-    style: {
-      fg: 'white',
-      border: {
-        fg: '#ffffff'
-      },
-      hover: {
-        bg: 'green'
-      }
-    },
-    hide: true
-  });
+  let screenBuffer;
 
-  const initialize = function () {
-    screen.append(emulatedDisplay);
-    emulatedDisplay.focus();
-    screen.render();
-
-    emulatedDisplay.key('enter', function(ch, key) {
-      emulatedDisplay.setContent('some text');
-      screen.render();
-    });
-
-    screen.key(['escape', 'q', 'C-c'], function (ch, key) {
-      return process.exit();
-    });
+  const initialize = function (sb) {
+    this.screenBuffer = sb;
   };
 
-  const render = function () {};
+  const render = function () {
+    const pixelHeight = 0;
+    const pixelWidth = 0;
 
-  return { render };
+    const state = this.screenBuffer.currentState();
+
+    for (let rowIdx = 0; rowIdx < state.length; rowIdx += 1) {
+      const row = state[rowIdx];
+
+      for (let columnIdx = 0; columnDix < row.length; columnIdx += 1) {
+        const col = row[columnIdx];
+
+        // take a guess at how slow this is
+
+      }
+    }
+  };
+
+  return { render, initialize };
 };
 
 module.exports = {

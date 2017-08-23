@@ -25,7 +25,5 @@
     "sinon": "^2.3.8",
     "weallcontribute": "^1.0.8"
   },
-  "dependencies": {
-    "blessed": "^0.1.81"
-  }
+  "dependencies": {}
 }
