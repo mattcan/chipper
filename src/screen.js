@@ -14,11 +14,14 @@ const screenBuffer = function () {
     reset();
   };
 
+  // Returns true when toggling off to signify collision
   const toggle = function (x, y) {
     if (buffer[x][y] === 0) {
       buffer[x][y] = 1;
+      return false;
     } else {
       buffer[x][y] = 0;
+      return true;
     }
   };
 
@@ -39,10 +42,32 @@ const screenBuffer = function () {
     }
   };
 
+  // TODO screen wrapping
+  // Currently this will blow the fuck up
+  const drawSprite = (coords, sprite) => {
+    const {x, y} = coords;
+    let collision = false;
+
+    for (let rowIdx = 0; rowIdx < sprite.length; rowIdx += 1) {
+      const row = sprite[rowIdx];
+
+      for (let colIdx = 0; colIdx < row.length; colIdx += 1) {
+        const offsetX = rowIdx + x;
+        const offsetY = colIdx + y;
+
+        const hasCollided = toggle(offsetX, offsetY);
+        if (hasCollided) { collision = true; }
+      }
+    }
+
+    return collision;
+  };
+
   return {
     initialize,
     toggle,
-    currentState
+    currentState,
+    drawSprite
   };
 
 };

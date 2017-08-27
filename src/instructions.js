@@ -73,6 +73,20 @@ module.exports = {
     this._cpu.register.set(regNumber, newValue);
 
     return this._cpu.pc.next();
+  },
+
+  draw: (x, y, nibble) => {
+    const getSprite = (nibble) => {};
+
+    const hasCollision = this._screenBuffer.drawSprite({x, y}, getSprite(nibble));
+
+    if (hasCollision) {
+      this._cpu.register.set(0xF, 1);
+    } else {
+      this._cpu.register.set(0xF, 0);
+    }
+
+    return this._cpu.pc.next();
   }
 
 };
