@@ -5,7 +5,7 @@
  **/
 const memory = require('./memory');
 const cpu = require('./cpu');
-const screenBuffer = require('./screen').screenBuffer;
+const screenBuffer = require('./screen').screenBuffer();
 const instructions = require('./instructions');
 
 const init = function (program) {
@@ -34,103 +34,130 @@ const main = function (program) {
 
     const args = memory.opArguments(opcode);
 
-    switch (opcode && 0xF000) {
+    console.log(`At 0x${pc.toString(16)} with 0x${opcode.toString(16)}`);
+
+    switch (opcode & 0xF000) {
       case 0x0000:
         switch (opcode) {
           case 0x00EE:
-            instructions.ret();
+            pc = instructions.ret();
             break;
+
           default:
             console.log('Nothing to see here..');
+            pc = instructions.missing();
         }
         break;
 
       case 0x1000:
-        instructions.jp(args.nnn);
+        pc = instructions.jp(args.nnn);
         break;
 
       case 0x2000:
-        instructions.call(args.nnn);
+        pc = instructions.call(args.nnn);
         break;
 
       case 0x3000:
-        instructions.skipIfValueEqual(args.x, args.kk);
+        pc = instructions.skipIfValueEqual(args.x, args.kk);
         break;
 
       case 0x4000:
-        instructions.skipIfValueNotEqual(args.x, args.kk);
+        pc = instructions.skipIfValueNotEqual(args.x, args.kk);
         break;
 
       case 0x6000:
-        instructions.insertValueIntoRegister(args.x, args.kk);
+        pc = instructions.insertValueIntoRegister(args.x, args.kk);
         break;
 
       case 0x7000:
-        instructions.addValueToRegister(args.x, args.kk);
+        pc = instructions.addValueToRegister(args.x, args.kk);
         break;
 
       case 0x8000:
         switch (opcode & 0x000F) {
           case 0x0000:
+            pc = instructions.copyRegister(args.x, args.y);
             break;
 
           case 0x0002:
+            pc = instructions.bitAnd(args.x, args.y);
             break;
 
           case 0x0004:
+            pc = instructions.addRegisters(args.x, args.y);
             break;
 
           case 0x0005:
+            pc = instructions.subtractRegister(args.x, args.y);
             break;
+
+          default:
+            console.log('why this code?');
+            pc = instructions.missing();
         }
         break;
 
       case 0xA000:
+        pc = instructions.setRegisterI(args.nnn);
         break;
 
       case 0xC000:
+        pc = instructions.missing();
         break;
 
       case 0xD000:
+        pc = instructions.draw(args.x, args.y, args.n);
         break;
 
       case 0xE000:
         switch (opcode & 0x00FF) {
           case 0x00A1:
+            pc = instructions.missing();
             break;
+
+          default:
+            console.log('not an accepted opcode');
+            pc = instructions.missing();
         }
         break;
 
       case 0xF000:
         switch (opcode & 0x00FF) {
           case 0x007:
+            pc = instructions.missing();
             break;
 
           case 0x0015:
+            pc = instructions.missing();
             break;
 
           case 0x0018:
+            pc = instructions.missing();
             break;
 
           case 0x0029:
+            pc = instructions.missing();
             break;
 
           case 0x0033:
+            pc = instructions.missing();
             break;
 
           case 0x0065:
+            pc = instructions.missing();
             break;
+
+          default:
+            console.log('some opcode');
+            pc = instructions.missing();
         }
         break;
+
+      default:
+        console.log('what real fall through looks like');
+        pc = instructions.missing();
     }
 
-    /*
-    console.log(`0x${opcode.toString(16)}`);
-    console.log(args);
-    console.log('----');
-    */
-
-    pc = cpu.pc.next();
     if (pc >= memory.size) {
       run = false;
     }

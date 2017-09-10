@@ -11,6 +11,11 @@ module.exports = {
     this._screenBuffer = screenBuffer;
   },
 
+  missing: function () {
+    console.log('Need to implement instruction');
+    return this._cpu.pc.next();
+  },
+
   clearScreen: function () {
     this._screenBuffer.reset();
     return this._cpu.pc.next();
@@ -75,16 +80,103 @@ module.exports = {
     return this._cpu.pc.next();
   },
 
-  draw: (x, y, nibble) => {
-    const getSprite = (nibble) => {};
+  draw: function (x, y, nibble) {
 
-    const hasCollision = this._screenBuffer.drawSprite({x, y}, getSprite(nibble));
+    const getSprite = (baseAddress, startByte, mem) => {
+      const sprite = [];
+
+      for (i = 0; i < startByte; i++) {
+        sprite[i] = [];
+        spr = mem[baseAddress + i];
+        for (j = 0; j < 8; j++) {
+          if ((spr & 0x80) > 0) {
+            sprite[i][j] = spr;
+          }
+          spr <<= 1;
+        }
+      }
+
+      return sprite;
+    };
+
+    const coords = {
+      x: this._cpu.register.get(x),
+      y: this._cpu.register.get(y)
+    };
+
+    const hasCollision = this._screenBuffer.drawSprite(
+      coords,
+      getSprite(this._cpu.register.getI(), nibble, this._memory));
 
     if (hasCollision) {
       this._cpu.register.set(0xF, 1);
     } else {
       this._cpu.register.set(0xF, 0);
     }
+
+    return this._cpu.pc.next();
+  },
+
+  copyRegister: function (to, from) {
+    const fromValue = this._cpu.register.get(from);
+
+    this._cpu.register.set(to, fromValue);
+
+    return this._cpu.pc.next();
+  },
+
+  bitAnd: function (regOne, regTwo) {
+    const regOneVal = this._cpu.register.get(regOne);
+    const regTwoVal = this._cpu.register.get(regTwo);
+
+    const newVal = regOneVal & regTwoVal;
+
+    this._cpu.register.set(regOne, newVal);
+
+    return this._cpu.pc.next();
+  },
+
+  addRegisters: function (regOne, regTwo) {
+    const regOneVal = this._cpu.register.get(regOne);
+    const regTwoVal = this._cpu.register.get(regTwo);
+
+    const newVal = regOneVal + regTwoVal;
+    this._cpu.register.set(regOne, (newVal & 0xFF));
+
+    this._cpu.register.set(
+      0xF,
+      (newVal > 255 ? 1 : 0)
+    );
+
+    return this._cpu.pc.next();
+  },
+
+  subtractRegister: function (fromReg, subtractorReg) {
+    const regOneVal = this._cpu.register.get(fromReg);
+    const regTwoVal = this._cpu.register.get(subtractorReg);
+
+    const newVal = regOneVal - regTwoVal;
+    this._cpu.register.set(regOneVal, newVal);
+
+    this._cpu.register.set(
+      0xF,
+      (regOneVal > regTwoVal ? 1 : 0)
+    );
+
+    return this._cpu.pc.next();
+  },
+
+  setRegisterI: function (addr) {
+    this._cpu.register.setI(addr);
+
+    return this._cpu.pc.next();
+  },
+
+  saveRandom: function (regNumber, byte) {
+    const random = Math.floor(Math.random() * 255);
+    const newValue = random & byte;
+
+    this._cpu.register.set(regNumber, newValue);
 
     return this._cpu.pc.next();
   }

@@ -142,19 +142,60 @@ describe('Instructions', () => {
     expect(cpu.register._vReg[0]).toBe(0xA1);
   });
 
-  it('Adds value to register', () => {
-    const mockCPU = { register: { set: () => {} }, pc: {} };
-    mockCPU.register.get = (registerIndex) => { return 0x01; };
-    mockCPU.pc.next = () => { return 0x202; };
-    const regSet = sinon.stub(mockCPU.register, "set");
+  describe('Register work', () => {
+    let mockCPU, regSet, regGet;
 
-    instructions.initialize(mockCPU, null);
+    beforeEach(() => {
+      mockCPU = { register: {}, pc: {} };
+      mockCPU.register.get = (registerIndex) => { return 0x01; };
+      mockCPU.register.set = () => {};
+      mockCPU.pc.next = () => { return 0x202; };
 
-    const newPC = instructions.addValueToRegister(0, 0x01);
-    expect(newPC).toBe(0x202);
-    expect(regSet.calledOnce).toBe(true);
+      regSet = sinon.stub(mockCPU.register, "set");
+      regGet = sinon.stub(mockCPU.register, "get");
+    });
 
-    regSet.reset();
+    it('Adds value to register', () => {
+      instructions.initialize(mockCPU, null);
+
+      const newPC = instructions.addValueToRegister(0, 0x01);
+      expect(newPC).toBe(0x202);
+      expect(regSet.calledOnce).toBe(true);
+
+      regSet.reset();
+    });
+
+    it('Copies a registers value to another register', () => {
+      instructions.initialize(mockCPU, null);
+
+      const newPC = instructions.copyRegister(0, 1);
+      expect(regSet.calledOnce).toBe(true);
+      expect(regGet.callCount).toBe(1);
+    });
+
+    it('Performs a bitwise AND on two register values and saves the result in first reg', () => {
+      instructions.initialize(mockCPU, null);
+
+      const newPC = instructions.bitAnd(0, 1);
+      expect(regSet.calledOnce).toBe(true);
+      expect(regGet.callCount).toBe(2);
+    });
+
+    it('Add two registers, save in X, carry set', () => {
+      instructions.initialize(mockCPU, null);
+
+      const newPC = instructions.addRegisters(0, 1);
+      expect(regSet.callCount).toBe(2);
+      expect(regGet.callCount).toBe(2);
+    });
+
+    it('Subtract register y from x, set borrow', () => {
+      instructions.initialize(mockCPU, null);
+
+      const newPC = instructions.subtractRegister(0, 1);
+      expect(regSet.callCount).toBe(2);
+      expect(regGet.callCount).toBe(2);
+    });
   });
 
 });

@@ -65,6 +65,7 @@ const screenBuffer = function () {
 
   return {
     initialize,
+    reset,
     toggle,
     currentState,
     drawSprite

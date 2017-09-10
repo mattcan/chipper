@@ -34,7 +34,11 @@ module.exports = {
       }
 
       this._vReg[index] = value;
-    }
+    },
+
+    getI: () => ( this._iReg ),
+
+    setI: (val) => { this._iReg = val; }
   },
 
   pc: {
