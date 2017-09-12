@@ -179,6 +179,24 @@ module.exports = {
     this._cpu.register.set(regNumber, newValue);
 
     return this._cpu.pc.next();
+  },
+
+  skipNextInstruction: function (regNumber) {
+  /*
+    ExA1 - SKNP Vx
+    Skip next instruction if key with the value of Vx is not pressed.
+
+    Checks the keyboard, and if the key corresponding to the value of Vx is currently in the up position, PC is increased by 2.
+   */
+  },
+
+  copyDelyToRegister: function (regNumber) {
+    /*
+      Fx07 - LD Vx, DT
+      Set Vx = delay timer value.
+
+      The value of DT is placed into Vx.
+    */
   }
 
 };

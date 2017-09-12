@@ -27,14 +27,20 @@ const main = function (program) {
   init(program);
 
   let pc = cpu.pc.get();
+  let quite = false;
   let run = true;
-  while (run) {
+  while (!quit) {
     const opcode = memory.opCode(pc);
-    if (isNull(opcode)) { break; }
+    if (isNull(opcode)) {
+      quit = true;
+      continue;
+    }
 
     const args = memory.opArguments(opcode);
 
     console.log(`At 0x${pc.toString(16)} with 0x${opcode.toString(16)}`);
+
+    if (run === false) { continue; }
 
     switch (opcode & 0xF000) {
       case 0x0000:
@@ -102,7 +108,7 @@ const main = function (program) {
         break;
 
       case 0xC000:
-        pc = instructions.missing();
+        pc = instructions.saveRandom(args.x, args.kk);
         break;
 
       case 0xD000:
@@ -159,7 +165,7 @@ const main = function (program) {
     }
 
     if (pc >= memory.size) {
-      run = false;
+      quit = true;
     }
   }
 };
