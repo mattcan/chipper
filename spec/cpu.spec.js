@@ -11,7 +11,6 @@ describe('CPU', () => {
   it('will initialize registers', () => {
     cpu.initialize();
     expect(cpu.register._vReg.length).toBe(16);
-    expect(cpu._flag).toBe(false);
     expect(cpu._iReg.length).toBe(2);
     expect(cpu._sound.length).toBe(1);
     expect(cpu._halt.length).toBe(1);

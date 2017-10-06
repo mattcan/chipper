@@ -12,7 +12,6 @@ module.exports = {
   // Create all the private variables
   initialize: function () {
     this.register._vReg = Buffer.alloc(16);
-    this._flag = false;
     this._iReg = Buffer.alloc(2);
     this._sound = Buffer.alloc(1);
     this._halt = Buffer.alloc(1);
