@@ -4,6 +4,7 @@
   "description": "CHIP-8 interpreter",
   "main": "src/chip8.js",
   "scripts": {
+    "prepush": "npm test",
     "start": "node chip8.js",
     "test": "jasmine",
     "test:watch": "nodemon --exec jasmine",
@@ -20,6 +21,7 @@
   "author": "Matthew Cantelon",
   "license": "GPL-3.0",
   "devDependencies": {
+    "husky": "^0.14.3",
     "jasmine": "^2.6.0",
     "nodemon": "^1.11.0",
     "sinon": "^2.3.8",
