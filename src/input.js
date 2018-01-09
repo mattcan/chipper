@@ -7,34 +7,61 @@ const readline = require('readline');
 readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 
-// TODO actually map keys in a sensible manner
 const keymap = {
-    '1': 0x1,
-    '2': 0x2,
-    '3': 0x3,
-    '4': 0x4,
-    '5': 0x5,
-    '6': 0x6,
-    '7': 0x7,
-    '8': 0x8,
-    '9': 0x9,
-    'a': 0xA,
-    'b': 0xB,
-    'c': 0xC,
-    'd': 0xD,
-    'e': 0xE,
-    'f': 0xF,
-    'g': 0x10
+    '2': 0x1,
+    '3': 0x2,
+    '4': 0x3,
+    '5': 0x4,
+    'w': 0x5,
+    'e': 0x6,
+    'r': 0x7,
+    't': 0x8,
+    's': 0x9,
+    'd': 0xA,
+    'f': 0xB,
+    'g': 0xC,
+    'x': 0xD,
+    'c': 0xE,
+    'v': 0xF,
+    'b': 0x10
 };
 
-const createListener = function (setKey) {
+let lastKeyPress;
+
+/**
+ * Notes
+ * 
+ * Holding a key will fire multiple key presses though the second event will have a slight delay
+ */
+const handleKeyDown = function (setKey) {
     process.stdin.on('keypress', function (str, key) {
+        // quit
+        if (key.ctrl && key.name === 'c') { process.exit(); }
+
         // no modifiers allowed
         if (key.ctrl || key.meta || key.shift) { return; }
 
         // this is shitty, theres no keyup to clear things
         setKey(keymap[key.name]);
+        lastKeyPress = new Date();
     });
 };
 
-module.exports = createListener;
+const handleKeyUp = function (clearKey) {
+    const intervalId = setInterval(function () {
+        const span = lastKeyPress !== undefined
+            ? (new Date()) - lastKeyPress
+            : 0;
+        if (span > 25) {
+            lastKeyPress = undefined;
+            clearKey();
+        }
+    }, 25);
+
+    return intervalId;
+};
+
+module.exports = {
+    handleKeyDown,
+    handleKeyUp
+};
