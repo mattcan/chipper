@@ -16,9 +16,21 @@ cd /project/directory
 node chip8.js vm path/to/roms/PONG
 ```
 
+You can also run the disassembler
+
+```sh
+node chip8.js ds /path/to/rom/SOMEROM
+```
+
+## Tests
+
+```sh
+npm test
+```
+
 ## TODO
 
-[Project Board](https://github.com/mattcan/chipper/projects/1)
+[Project Board](https://trello.com/b/o27qNWtj)
 
 ## Sources
 
