@@ -30,7 +30,13 @@ const FONT_SPRITES = [
 ];
 
 const memory = {
+  // Essentially ROM
   _buf: [],
+
+  // Shitty keyboard handling means this is how we know
+  // what key is currently pressed. May not always be correct
+  // but hopefully corrects after 25ms. Hopefully.
+  _currentKeyPressed: undefined,
 
   _loadToMemory:  function(data, offset = 0) {
     for (let i = 0; i < data.length; i += 1) {
@@ -55,6 +61,7 @@ const memory = {
     this._loadToMemory(FONT_SPRITES);
     this.stack.memParent = this;
     this.stack.pointer = STACK_POINTER_START;
+    // current key needs no init
   },
 
   loadProgram: function (program) {
@@ -77,6 +84,15 @@ const memory = {
       y: (opCode & 0x00F0) >> 4,
       kk: (opCode & 0x00FF)
     };
+  },
+
+  setCurrentKey: function (newKey) {
+    this._currentKeyPressed = newKey;
+  },
+
+  // Return zero for safety?
+  getCurrentKey: function () {
+    return this._currentKeyPressed || 0x0;
   },
 
   stack: {

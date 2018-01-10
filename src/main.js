@@ -7,6 +7,7 @@ const memory = require('./memory');
 const cpu = require('./cpu');
 const screenBuffer = require('./screen').screenBuffer();
 const instructions = require('./instructions');
+const input = require('./input');
 
 const init = function (program) {
   memory.initialize();
@@ -17,6 +18,9 @@ const init = function (program) {
   screenBuffer.initialize();
 
   instructions.initialize(cpu, memory, screenBuffer);
+
+  input.handleKeyDown(memory.setCurrentKey);
+  input.handleKeyUp(function () { memory.setCurrentKey(undefined); });
 };
 
 const isNull = function (opcode) {
