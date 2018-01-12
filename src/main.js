@@ -21,27 +21,35 @@ const setupStdin = function () {
 const init = function (program) {
   setupStdin();
 
+  // TODO move to CPU
   memory.initialize();
   memory.loadProgram(program);
 
   cpu.initialize();
 
+  // TODO move to CPU
   screenBuffer.initialize();
   display.initialize(screenBuffer);
 
+  // TODO make part of CPU
   instructions.initialize(cpu, memory, screenBuffer, input.getCurrentKey);
 };
 
+// TODO necessary?
 const isNull = function (opcode) {
   return (opcode & 0xFFFF) === 0x0000;
 };
 
 const main = function (program) {
   init(program);
+  cpu.run();
 
+  // TODO should not be needed
   let pc = cpu.pc.get();
   let quit = false;
   let run = true;
+
+  /*
   while (!quit) {
     const opcode = memory.opCode(pc);
     if (isNull(opcode)) {
@@ -181,12 +189,13 @@ const main = function (program) {
         pc = instructions.missing();
     }
 
-    display.render();
+    // display.render();
 
     if (pc >= memory.size) {
       quit = true;
     }
   }
+  */
 };
 
 module.exports = main;

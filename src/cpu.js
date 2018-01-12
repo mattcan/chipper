@@ -6,6 +6,7 @@
 const OutOfBounds = require('./exceptions/OutOfBounds');
 
 const PROGRAM_START = 0x200;
+const CLOCK_SPEED = 60; // Hz
 
 module.exports = {
 
@@ -16,6 +17,31 @@ module.exports = {
     this._sound = Buffer.alloc(1);
     this._halt = Buffer.alloc(1);
     this.pc._pointer = PROGRAM_START;
+    this._tickHandler = undefined;
+  },
+
+  run: function () {
+    const self = this;
+
+    const tick = function () {
+      return setInterval(function () {
+        self.execute(self.decode);
+        // repaint?
+      }, 1000 / CLOCK_SPEED);
+    };
+
+    this._tickHandler = tick();
+  },
+
+  decode: function () {
+    const pc = this.pc.get();
+    // get opcode
+    // get get arguments
+    // return data in structure
+  },
+
+  execute: function (operation) {
+    // jump table for instructions
   },
 
   register: {
