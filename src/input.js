@@ -23,42 +23,47 @@ const keymap = {
 };
 
 const input = function () {
-    let lastKeyPress;
-    let currentlyPressed;
+  let lastKeyPress;
+  let currentlyPressed;
 
-    const handleKeyDown = function (str, key) {
-        // quit
-        if (key.ctrl && key.name === 'c') { process.exit(); }
+  const handleKeyDown = function (str, key) {
+    console.log('a key was pressed');
 
-        // no modifiers allowed
-        if (key.ctrl || key.meta || key.shift) { return; }
+    // quit
+    if (key.ctrl && key.name === 'c') {
+      console.log('quit keys pressed');
+      process.exit();
+    }
 
-        // this is shitty, theres no keyup to clear things
-        currentlyPressed = keymap[key.name];
-        lastKeyPress = new Date();
-    };
+    // no modifiers allowed
+    if (key.ctrl || key.meta || key.shift) { return; }
 
-    const handleKeyUp = function () {
-        const intervalId = setInterval(function () {
-            const span = lastKeyPress !== undefined
-                ? (new Date()) - lastKeyPress
-                : 0;
-            if (span > 25) {
-                lastKeyPress = undefined;
-                currentlyPressed = undefined;
-            }
-        }, 25);
+    // this is shitty, theres no keyup to clear things
+    currentlyPressed = keymap[key.name];
+    lastKeyPress = new Date();
+  };
 
-        return intervalId;
-    };
+  const handleKeyUp = function () {
+    const intervalId = setInterval(function () {
+      const span = lastKeyPress !== undefined
+        ? (new Date()) - lastKeyPress
+        : 0;
+      if (span > 25) {
+        lastKeyPress = undefined;
+        currentlyPressed = undefined;
+      }
+    }, 25);
 
-    const getCurrentKey = function () { return currentlyPressed; };
+    return intervalId;
+  };
 
-    return {
-        handleKeyDown,
-        handleKeyUp,
-        getCurrentKey
-    };
+  const getCurrentKey = function () { return currentlyPressed; };
+
+  return {
+    handleKeyDown,
+    handleKeyUp,
+    getCurrentKey
+  };
 };
 
 module.exports = input();
