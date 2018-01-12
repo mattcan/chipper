@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/vim,linux,osx,windows,node,visualstudiocode
 
 ### Linux ###
@@ -147,5 +146,4 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/vim,linux,osx,windows,node,visualstudiocode
 
-roms/*
 .vscode/
