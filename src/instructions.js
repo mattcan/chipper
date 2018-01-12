@@ -5,10 +5,11 @@
  **/
 
 module.exports = {
-  initialize: function (cpu, memory, screenBuffer) {
+  initialize: function (cpu, memory, screenBuffer, getCurrentKeyPressed) {
     this._cpu = cpu;
     this._memory = memory;
     this._screenBuffer = screenBuffer;
+    this._getCurrentKey = getCurrentKeyPressed;
   },
 
   missing: function () {

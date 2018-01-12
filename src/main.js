@@ -9,7 +9,17 @@ const screenBuffer = require('./screen').screenBuffer();
 const instructions = require('./instructions');
 const input = require('./input');
 
+const setupStdin = function () {
+  const readline = require('readline');
+  readline.emitKeypressEvents(process.stdin);
+  process.stdin.setRawMode(true);
+  process.stdin.on('keypress', input.handleKeyDown);
+  input.handleKeyUp();
+}
+
 const init = function (program) {
+  setupStdin();
+
   memory.initialize();
   memory.loadProgram(program);
 
@@ -17,10 +27,7 @@ const init = function (program) {
 
   screenBuffer.initialize();
 
-  instructions.initialize(cpu, memory, screenBuffer);
-
-  input.handleKeyDown(memory.setCurrentKey);
-  input.handleKeyUp(function () { memory.setCurrentKey(undefined); });
+  instructions.initialize(cpu, memory, screenBuffer, input.getCurrentKey);
 };
 
 const isNull = function (opcode) {
@@ -121,6 +128,10 @@ const main = function (program) {
 
       case 0xE000:
         switch (opcode & 0x00FF) {
+          case 0x9E:
+            pc = instructions.missing();
+            break;
+
           case 0x00A1:
             pc = instructions.missing();
             break;

@@ -3,10 +3,6 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
-const readline = require('readline');
-readline.emitKeypressEvents(process.stdin);
-process.stdin.setRawMode(true);
-
 const keymap = {
     '2': 0x1,
     '3': 0x2,
@@ -26,15 +22,11 @@ const keymap = {
     'b': 0x10
 };
 
-let lastKeyPress;
+const input = function () {
+    let lastKeyPress;
+    let currentlyPressed;
 
-/**
- * Notes
- * 
- * Holding a key will fire multiple key presses though the second event will have a slight delay
- */
-const handleKeyDown = function (setKey) {
-    process.stdin.on('keypress', function (str, key) {
+    const handleKeyDown = function (str, key) {
         // quit
         if (key.ctrl && key.name === 'c') { process.exit(); }
 
@@ -42,26 +34,31 @@ const handleKeyDown = function (setKey) {
         if (key.ctrl || key.meta || key.shift) { return; }
 
         // this is shitty, theres no keyup to clear things
-        setKey(keymap[key.name]);
+        currentlyPressed = keymap[key.name];
         lastKeyPress = new Date();
-    });
+    };
+
+    const handleKeyUp = function () {
+        const intervalId = setInterval(function () {
+            const span = lastKeyPress !== undefined
+                ? (new Date()) - lastKeyPress
+                : 0;
+            if (span > 25) {
+                lastKeyPress = undefined;
+                currentlyPressed = undefined;
+            }
+        }, 25);
+
+        return intervalId;
+    };
+
+    const getCurrentKey = function () { return currentlyPressed; };
+
+    return {
+        handleKeyDown,
+        handleKeyUp,
+        getCurrentKey
+    };
 };
 
-const handleKeyUp = function (clearKey) {
-    const intervalId = setInterval(function () {
-        const span = lastKeyPress !== undefined
-            ? (new Date()) - lastKeyPress
-            : 0;
-        if (span > 25) {
-            lastKeyPress = undefined;
-            clearKey();
-        }
-    }, 25);
-
-    return intervalId;
-};
-
-module.exports = {
-    handleKeyDown,
-    handleKeyUp
-};
+module.exports = input();
