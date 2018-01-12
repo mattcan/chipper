@@ -38,7 +38,7 @@ const main = function (program) {
   init(program);
 
   let pc = cpu.pc.get();
-  let quite = false;
+  let quit = false;
   let run = true;
   while (!quit) {
     const opcode = memory.opCode(pc);
