@@ -6,6 +6,7 @@
 const memory = require('./memory');
 const cpu = require('./cpu');
 const screenBuffer = require('./screen').screenBuffer();
+const display = require('./screen').display();
 const instructions = require('./instructions');
 const input = require('./input');
 
@@ -26,6 +27,7 @@ const init = function (program) {
   cpu.initialize();
 
   screenBuffer.initialize();
+  display.initialize(screenBuffer);
 
   instructions.initialize(cpu, memory, screenBuffer, input.getCurrentKey);
 };
@@ -49,7 +51,7 @@ const main = function (program) {
 
     const args = memory.opArguments(opcode);
 
-    console.log(`At 0x${pc.toString(16)} with 0x${opcode.toString(16)}`);
+    // console.log(`At 0x${pc.toString(16)} with 0x${opcode.toString(16)}`);
 
     if (run === false) { continue; }
 
@@ -178,6 +180,8 @@ const main = function (program) {
         console.log('what real fall through looks like');
         pc = instructions.missing();
     }
+
+    display.render();
 
     if (pc >= memory.size) {
       quit = true;
