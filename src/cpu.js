@@ -4,6 +4,9 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 const OutOfBounds = require('./exceptions/OutOfBounds');
+const instructions = require('./instructions');
+// const memory = require('./memory');
+// const screenBuffer = require('./screen').screenBuffer();
 
 const PROGRAM_START = 0x200;
 const CLOCK_SPEED = 60; // Hz
@@ -18,9 +21,12 @@ module.exports = {
     this._halt = Buffer.alloc(1);
     this.pc._pointer = PROGRAM_START;
     this._tickHandler = undefined;
+    this._instructions = instructions.initialize(this);
   },
 
   run: function () {
+    this.initialize();
+
     const self = this;
 
     const tick = function () {
@@ -42,6 +48,14 @@ module.exports = {
 
   execute: function (operation) {
     // jump table for instructions
+  },
+
+  getMemory: function () {
+    return undefined;
+  },
+
+  getScreenBuffer: function () {
+    return undefined;
   },
 
   register: {

@@ -30,9 +30,6 @@ const init = function (program) {
   // TODO move to CPU
   screenBuffer.initialize();
   display.initialize(screenBuffer);
-
-  // TODO make part of CPU
-  instructions.initialize(cpu, memory, screenBuffer, input.getCurrentKey);
 };
 
 // TODO necessary?

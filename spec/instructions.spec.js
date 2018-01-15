@@ -28,11 +28,7 @@ describe('Instructions', () => {
     cpuMock.expects("set").once().returns(0x352);
     const stackSpy = sinon.spy(memory.stack, "push");
 
-    // T_T
-    memory.initialize();
-    cpu.initialize();
-
-    instructions.initialize(cpu, memory);
+    instructions.initialize(cpu);
 
     const newPC = instructions.call(0x352);
     expect(newPC).toBe(0x352);

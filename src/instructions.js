@@ -5,11 +5,8 @@
  **/
 
 module.exports = {
-  initialize: function (cpu, memory, screenBuffer, getCurrentKeyPressed) {
+  initialize: function (cpu) {
     this._cpu = cpu;
-    this._memory = memory;
-    this._screenBuffer = screenBuffer;
-    this._getCurrentKey = getCurrentKeyPressed;
   },
 
   missing: function () {
@@ -18,12 +15,12 @@ module.exports = {
   },
 
   clearScreen: function () {
-    this._screenBuffer.reset();
+    this._cpu.getScreenBuffer().reset();
     return this._cpu.pc.next();
   },
 
   ret: function () {
-    const returnTo = this._memory.stack.pop();
+    const returnTo = this._cpu.getMemory().stack.pop();
     return this._cpu.pc.set(returnTo);
   },
 
@@ -32,7 +29,7 @@ module.exports = {
   },
 
   call: function (address) {
-    this._memory.stack.push(this._cpu.pc.get());
+    this._cpu.getMemory().stack.push(this._cpu.pc.get());
     return this._cpu.pc.set(address);
   },
 
@@ -105,9 +102,10 @@ module.exports = {
       y: this._cpu.register.get(y)
     };
 
-    const hasCollision = this._screenBuffer.drawSprite(
+    const hasCollision = this._cpu.getScreenBuffer().drawSprite(
       coords,
-      getSprite(this._cpu.register.getI(), nibble, this._memory));
+      getSprite(this._cpu.register.getI(), nibble, this._cpu.getMemory())
+    );
 
     if (hasCollision) {
       this._cpu.register.set(0xF, 1);
