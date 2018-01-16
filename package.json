@@ -6,8 +6,8 @@
   "scripts": {
     "prepush": "npm test",
     "start": "node chip8.js",
-    "test": "jasmine",
-    "test:watch": "nodemon --exec jasmine",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "update-contrib": "weallcontribute -o .github/CONTRIBUTING.md && git add .github/CONTRIBUTING.md"
   },
   "repository": {
@@ -30,5 +30,18 @@
   },
   "dependencies": {
     "axel": "0.0.3"
+  },
+  "jest": {
+    "roots": [
+      "src",
+      "spec"
+    ],
+    "collectCoverageFrom": [
+      "**/*.js"
+    ],
+    "testMatch": [
+      "**/*.spec.js"
+    ],
+    "testEnvironment": "node"
   }
 }
