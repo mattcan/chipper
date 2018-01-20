@@ -144,23 +144,20 @@ module.exports = {
 
     this._cpu.register.set(
       0xF,
-      (newVal > 255 ? 1 : 0)
+      (newVal >= 0xFF ? 1 : 0)
     );
 
     return this._cpu.pc.next();
   },
 
-  subtractRegister: function (fromReg, subtractorReg) {
-    const regOneVal = this._cpu.register.get(fromReg);
-    const regTwoVal = this._cpu.register.get(subtractorReg);
+  subtractRegister: function (xReg, yReg) {
+    const minuend = this._cpu.register.get(xReg);
+    const subtrahend = this._cpu.register.get(yReg);
+    const borrow = subtrahend > minuend ? 1 : 0;
 
-    const newVal = regOneVal - regTwoVal;
-    this._cpu.register.set(regOneVal, newVal);
-
-    this._cpu.register.set(
-      0xF,
-      (regOneVal > regTwoVal ? 1 : 0)
-    );
+    const newVal = Math.abs(minuend - subtrahend);
+    this._cpu.register.set(xReg, newVal);
+    this._cpu.register.set(0xF, borrow);
 
     return this._cpu.pc.next();
   },

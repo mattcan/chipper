@@ -3,14 +3,20 @@
  * Please see LICENSE in the root for full details
  * Copyright (C) 2017  Matthew Cantelon
  **/
-const sinon = require('sinon');
-const memory = require('../src/memory');
 const instructions = require('../src/instructions');
 
 jest.mock('../src/cpu', () => ({
-  pc: {
+  register: {
+    get: jest.fn(),
     set: jest.fn()
-  }
+  },
+  pc: {
+    _pointer: 0x0,
+    set: jest.fn(),
+    get: jest.fn(),
+    next: jest.fn()
+  },
+  getMemory: jest.fn()
 }));
 
 describe('Instructions', () => {
@@ -33,173 +39,163 @@ describe('Instructions', () => {
     expect(cpu.pc.set).toHaveBeenCalledWith(0x352);
   });
 
-  xit('CALL executes subroutine at address', () => {
+  it('CALL executes subroutine at address', () => {
     cpu.pc.set.mockReturnValueOnce(0x352);
-    const cpuMock = sinon.mock(cpu);
-    cpuMock.expects("getMemory").once().returns({ stack: { push: function () {} }});
+    const pushMock = cpu.getMemory.mockReturnValueOnce({ stack: { push: jest.fn() }});
 
     instructions.initialize(cpu);
 
     const newPC = instructions.call(0x352);
     expect(newPC).toBe(0x352);
-
-    cpuMock.verify();
+    expect(pushMock).toHaveBeenCalled();
   });
 
   describe('Skip if register equals value', () => {
 
-    let regMock = null;
-
     beforeEach(() => {
-      regMock = sinon.mock(cpu.register);
-      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
       cpu.pc._pointer = 0x200;
+      cpu.register.get.mockReturnValueOnce(0xFA);
 
       instructions.initialize(cpu);
     });
 
-    afterEach(() => {
-      regMock.verify();
-      regMock.restore();
+    it('SE Vx, byte increments counter', () => {
+      instructions.skipIfValueEqual(0, 0xFA);
+      expect(cpu.register.get).toHaveBeenCalled();
+      expect(cpu.pc.next).toHaveBeenCalledTimes(2);
     });
 
-    xit('SE Vx, byte increments counter', () => {
-      const newPC = instructions.skipIfValueEqual(0, 0xFA);
-      expect(newPC).toBe(0x204);
-    });
-
-    xit('SE Vx, byte does nothing', () => {
-      const newPC = instructions.skipIfValueEqual(0, 0xAA);
-      expect(newPC).toBe(0x202);
+    it('SE Vx, byte does nothing', () => {
+      instructions.skipIfValueEqual(0, 0xAA);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
     });
 
   });
 
   describe('Skip if register x does not equal value', () => {
 
-    let regMock = null;
-
     beforeEach(() => {
-      regMock = sinon.mock(cpu.register);
-      regMock.expects("get").once().withExactArgs(0).returns(0xFA);
+      cpu.register.get.mockReturnValueOnce(0xFA);
       cpu.pc._pointer = 0x200;
 
-      instructions.initialize(cpu, null);
+      instructions.initialize(cpu);
     });
 
-    afterEach(() => {
-      regMock.verify();
-      regMock.restore();
+    it('SNE Vx, byte skips next instruction', () => {
+      instructions.skipIfValueNotEqual(0, 0xAA);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(2);
     });
 
-    xit('SNE Vx, byte skips next instruction', () => {
-      const newPC = instructions.skipIfValueNotEqual(0, 0xAA);
-      expect(newPC).toBe(0x204);
-    });
-
-    xit('SNE Vx, byte continues to next instruction', () => {
-      const newPC = instructions.skipIfValueNotEqual(0, 0xFA);
-      expect(newPC).toBe(0x202);
+    it('SNE Vx, byte continues to next instruction', () => {
+      instructions.skipIfValueNotEqual(0, 0xFA);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
     });
 
   });
 
   describe('Skip if registers are equal', () => {
 
-    xit('Skips next instruction', () => {
-      const regMock = sinon.mock(cpu.register);
-      regMock.expects("get").atMost(2).returns(0xFA);
+    it('Skips next instruction', () => {
+      cpu.register.get
+        .mockReturnValue(0xFA)
+        .mockReturnValueOnce(0xFA);
       cpu.pc._pointer = 0x200;
 
-      instructions.initialize(cpu, null);
+      instructions.initialize(cpu);
 
-      const newPC = instructions.skipIfRegistersEqual(0, 1);
-      expect(newPC).toBe(0x204);
-
-      regMock.verify();
-      regMock.restore();
+      instructions.skipIfRegistersEqual(0, 1);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(2);
     });
 
-    xit('Continues to next instruction', () => {
-      const regStub = sinon.stub(cpu.register, "get");
-      regStub
-        .onFirstCall().returns(0xFA)
-        .onSecondCall().returns(0xAA);
+    it('Continues to next instruction', () => {
+      cpu.register.get
+        .mockReturnValue(0xFA)
+        .mockReturnValueOnce(0xBD);
       cpu.pc._pointer = 0x200;
 
-      instructions.initialize(cpu, null);
+      instructions.initialize(cpu);
 
-      const newPC = instructions.skipIfRegistersEqual(0, 1);
-      expect(newPC).toBe(0x202);
-      expect(regStub.calledTwice).toBe(true);
-
-      regStub.reset();
+      instructions.skipIfRegistersEqual(0, 1);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
     });
 
   });
 
-  xit('Insert value into register', () => {
+  it('Insert value into register', () => {
     cpu.pc._pointer = 0x200;
     instructions.initialize(cpu);
 
-    const newPC = instructions.insertValueIntoRegister(0, 0xA1);
-    expect(newPC).toBe(0x202);
-    expect(cpu.register._vReg[0]).toBe(0xA1);
+    instructions.insertValueIntoRegister(0, 0xA1);
+    expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+    expect(cpu.register.set).toHaveBeenCalledTimes(1);
   });
 
   describe('Register work', () => {
-    let mockCPU, regSet, regGet;
+    let regOne, regTwo;
 
     beforeEach(() => {
-      mockCPU = { register: {}, pc: {} };
-      mockCPU.register.get = (registerIndex) => { return 0x01; };
-      mockCPU.register.set = () => {};
-      mockCPU.pc.next = () => { return 0x202; };
-
-      regSet = sinon.stub(mockCPU.register, "set");
-      regGet = sinon.stub(mockCPU.register, "get");
+      cpu.register.get = jest.fn((registerIndex) => { return 0x01; });
+      instructions.initialize(cpu);
+      regOne = 0;
+      regTwo = 1;
     });
 
-    xit('Adds value to register', () => {
-      instructions.initialize(mockCPU, null);
-
-      const newPC = instructions.addValueToRegister(0, 0x01);
-      expect(newPC).toBe(0x202);
-      expect(regSet.calledOnce).toBe(true);
-
-      regSet.reset();
+    it('Adds value to register', () => {
+      instructions.addValueToRegister(0, 0x01);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+      expect(cpu.register.set).toHaveBeenCalledWith(0, 0x02);
     });
 
-    xit('Copies a registers value to another register', () => {
-      instructions.initialize(mockCPU, null);
+    it('Copies a registers value to another register', () => {
+      const fromReg = 0;
+      const toReg = 1;
+      instructions.copyRegister(toReg, fromReg);
 
-      const newPC = instructions.copyRegister(0, 1);
-      expect(regSet.calledOnce).toBe(true);
-      expect(regGet.callCount).toBe(1);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+      expect(cpu.register.get).toHaveBeenCalledTimes(1);
+      expect(cpu.register.set).toHaveBeenCalledWith(toReg, 0x01);
     });
 
-    xit('Performs a bitwise AND on two register values and saves the result in first reg', () => {
-      instructions.initialize(mockCPU, null);
+    it('Performs a bitwise AND on two register values and saves the result in first reg', () => {
+      cpu.register.get
+        .mockReturnValueOnce(0x01);
+      instructions.bitAnd(regOne, regTwo);
 
-      const newPC = instructions.bitAnd(0, 1);
-      expect(regSet.calledOnce).toBe(true);
-      expect(regGet.callCount).toBe(2);
+      expect(cpu.register.get).toHaveBeenCalledTimes(2);
+      expect(cpu.register.set).toHaveBeenCalledWith(regOne, 0x01);
     });
 
-    xit('Add two registers, save in X, carry set', () => {
-      instructions.initialize(mockCPU, null);
+    it('Add two registers, save in X, carry set to zero', () => {
+      cpu.register.get
+        .mockReturnValueOnce(0x02);
+      instructions.addRegisters(regOne, regTwo);
 
-      const newPC = instructions.addRegisters(0, 1);
-      expect(regSet.callCount).toBe(2);
-      expect(regGet.callCount).toBe(2);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+      expect(cpu.register.get).toHaveBeenCalledTimes(2);
+      expect(cpu.register.set).toHaveBeenCalledWith(regOne, 0x03);
+      expect(cpu.register.set).toHaveBeenCalledWith(0xF, 0x0);
     });
 
-    xit('Subtract register y from x, set borrow', () => {
-      instructions.initialize(mockCPU, null);
+    it('Add two registers, save in X, carry set to one', () => {
+      cpu.register.get
+        .mockReturnValueOnce(0xFF);
+      instructions.addRegisters(regOne, regTwo);
 
-      const newPC = instructions.subtractRegister(0, 1);
-      expect(regSet.callCount).toBe(2);
-      expect(regGet.callCount).toBe(2);
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+      expect(cpu.register.get).toHaveBeenCalledTimes(2);
+      expect(cpu.register.set).toHaveBeenCalledWith(regOne, 0x0);
+      expect(cpu.register.set).toHaveBeenLastCalledWith(0xF, 0x1);
+    });
+
+    it('Subtract register two from one, set borrow to one', () => {
+      cpu.register.get
+        .mockReturnValue(0xFF);
+      instructions.subtractRegister(regTwo, regOne);
+
+      expect(cpu.pc.next).toHaveBeenCalledTimes(1);
+      expect(cpu.register.get).toHaveBeenCalledTimes(2);
+      expect(cpu.register.set).toHaveBeenCalledWith(regTwo, 0x0);
+      expect(cpu.register.set).toHaveBeenLastCalledWith(0xF, 0x0);
     });
   });
 

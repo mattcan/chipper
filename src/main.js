@@ -20,12 +20,7 @@ const setupStdin = function () {
 
 const init = function (program) {
   setupStdin();
-
-  // TODO move to CPU
-  memory.initialize();
-  memory.loadProgram(program);
-
-  cpu.initialize();
+  cpu.initialize(program);
 
   // TODO move to CPU
   screenBuffer.initialize();
@@ -113,6 +108,10 @@ const main = function (program) {
 
           case 0x0005:
             pc = instructions.subtractRegister(args.x, args.y);
+            break;
+
+          case 0x0007:
+            pc = instructions.subtractRegister(args.y, args.x);
             break;
 
           default:

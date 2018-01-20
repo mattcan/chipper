@@ -5,7 +5,7 @@
  **/
 const OutOfBounds = require('./exceptions/OutOfBounds');
 const instructions = require('./instructions');
-// const memory = require('./memory');
+const memory = require('./memory');
 // const screenBuffer = require('./screen').screenBuffer();
 
 const PROGRAM_START = 0x200;
@@ -14,7 +14,7 @@ const CLOCK_SPEED = 60; // Hz
 module.exports = {
 
   // Create all the private variables
-  initialize: function () {
+  initialize: function (program) {
     this.register._vReg = Buffer.alloc(16);
     this._iReg = Buffer.alloc(2);
     this._sound = Buffer.alloc(1);
@@ -22,6 +22,9 @@ module.exports = {
     this.pc._pointer = PROGRAM_START;
     this._tickHandler = undefined;
     this._instructions = instructions.initialize(this);
+
+    memory.initialize();
+    memory.loadProgram(program);
   },
 
   run: function () {
