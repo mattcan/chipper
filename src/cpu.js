@@ -22,13 +22,14 @@ module.exports = {
     this._halt = Buffer.alloc(1);
     this.pc._pointer = PROGRAM_START;
     this._tickHandler = undefined;
+
     this._instructions = instructions.initialize(this);
 
-    memory.initialize();
-    memory.loadProgram(program);
+    this._memory = memory.initialize();
+    this._memory.loadProgram(program);
 
-    screenBuffer.initialize();
-    display.initialize(screenBuffer);
+    this._sb = screenBuffer.initialize();
+    this._display = display.initialize(this._sb);
   },
 
   run: function () {
@@ -37,7 +38,7 @@ module.exports = {
     const tick = function () {
       return setInterval(function () {
         self.execute(self.decode());
-        // repaint?
+        self._display.render();
       }, 1000 / CLOCK_SPEED);
     };
 
@@ -46,7 +47,7 @@ module.exports = {
 
   decode: function () {
     const pc = this.pc.get();
-    const opcode = memory.getAt(pc) << 8 | memory.getAt(pc + 1);
+    const opcode = this._memory.getAt(pc) << 8 | this._memory.getAt(pc + 1);
     return {
       code: opcode,
       args: {
@@ -60,140 +61,141 @@ module.exports = {
   },
 
   execute: function (operation) {
+    const args = operation.args;
     switch (operation.code & 0xF000) {
       case 0x0000:
         switch (operation.code) {
           case 0x00EE:
-            pc = this._instructions.ret();
+            this._instructions.ret();
             break;
 
           default:
             console.log('Nothing to see here..');
-            pc = this._instructions.missing();
+            this._instructions.missing();
         }
         break;
 
       case 0x1000:
-        pc = this._instructions.jp(args.nnn);
+        this._instructions.jp(args.nnn);
         break;
 
       case 0x2000:
-        pc = this._instructions.call(args.nnn);
+        this._instructions.call(args.nnn);
         break;
 
       case 0x3000:
-        pc = this._instructions.skipIfValueEqual(args.x, args.kk);
+        this._instructions.skipIfValueEqual(args.x, args.kk);
         break;
 
       case 0x4000:
-        pc = this._instructions.skipIfValueNotEqual(args.x, args.kk);
+        this._instructions.skipIfValueNotEqual(args.x, args.kk);
         break;
 
       case 0x6000:
-        pc = this._instructions.insertValueIntoRegister(args.x, args.kk);
+        this._instructions.insertValueIntoRegister(args.x, args.kk);
         break;
 
       case 0x7000:
-        pc = this._instructions.addValueToRegister(args.x, args.kk);
+        this._instructions.addValueToRegister(args.x, args.kk);
         break;
 
       case 0x8000:
         switch (operation.code & 0x000F) {
           case 0x0000:
-            pc = this._instructions.copyRegister(args.x, args.y);
+            this._instructions.copyRegister(args.x, args.y);
             break;
 
           case 0x0002:
-            pc = this._instructions.bitAnd(args.x, args.y);
+            this._instructions.bitAnd(args.x, args.y);
             break;
 
           case 0x0004:
-            pc = this._instructions.addRegisters(args.x, args.y);
+            this._instructions.addRegisters(args.x, args.y);
             break;
 
           case 0x0005:
-            pc = this._instructions.subtractRegister(args.x, args.y);
+            this._instructions.subtractRegister(args.x, args.y);
             break;
 
           case 0x0007:
-            pc = this._instructions.subtractRegister(args.y, args.x);
+            this._instructions.subtractRegister(args.y, args.x);
             break;
 
           default:
             console.log('why this code?');
-            pc = this._instructions.missing();
+            this._instructions.missing();
         }
         break;
 
       case 0xA000:
-        pc = this._instructions.setRegisterI(args.nnn);
+        this._instructions.setRegisterI(args.nnn);
         break;
 
       case 0xC000:
-        pc = this._instructions.saveRandom(args.x, args.kk);
+        this._instructions.saveRandom(args.x, args.kk);
         break;
 
       case 0xD000:
-        pc = this._instructions.draw(args.x, args.y, args.n);
+        this._instructions.draw(args.x, args.y, args.n);
         break;
 
       case 0xE000:
         switch (operation.code & 0x00FF) {
           case 0x9E:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x00A1:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           default:
             console.log('not an accepted operation.code');
-            pc = this._instructions.missing();
+            this._instructions.missing();
         }
         break;
 
       case 0xF000:
         switch (operation.code & 0x00FF) {
           case 0x007:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x0015:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x0018:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x0029:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x0033:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           case 0x0065:
-            pc = this._instructions.missing();
+            this._instructions.missing();
             break;
 
           default:
             console.log('some opcode');
-            pc = this._instructions.missing(operation.code);
+            this._instructions.missing(operation.code);
         }
         break;
 
       default:
         console.log('what real fall through looks like');
-        pc = this._instructions.missing();
+        this._instructions.missing();
     }
 
   },
 
   getMemory: function () {
-    return memory;
+    return this._memory;
   },
 
   getScreenBuffer: function () {

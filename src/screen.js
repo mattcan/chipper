@@ -12,6 +12,7 @@ const screenBuffer = function () {
 
   const initialize = function () {
     reset();
+    return this;
   };
 
   // Returns true when toggling off to signify collision
@@ -80,6 +81,7 @@ const display = function () {
 
   const initialize = function (sb) {
     screenBuffer = sb;
+    return this;
   };
 
   const _screenPosition = (coords) => {

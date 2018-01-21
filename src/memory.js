@@ -56,7 +56,8 @@ const memory = {
     this._loadToMemory(FONT_SPRITES);
     this.stack.memParent = this;
     this.stack.pointer = STACK_POINTER_START;
-    // current key needs no init
+
+    return this;
   },
 
   loadProgram: function (program) {

@@ -7,6 +7,7 @@
 module.exports = {
   initialize: function (cpu) {
     this._cpu = cpu;
+    return this;
   },
 
   missing: function () {
