@@ -26,14 +26,14 @@ describe('Memory', () => {
 
   it('gets memory at specific location', () => {
     memory.loadProgram([0x00, 0xE0, 0x12, 0x00]);
-    expect(memory._getAt(0x201)).toBe(0xE0);
+    expect(memory.getAt(0x201)).toBe(0xE0);
   });
 
   it('can set a byte at specific location', () => {
     memory.initialize();
     expect(memory._buf[0]).toBe(0xF0);
 
-    memory._setAt(0, 0xA0);
+    memory.setAt(0, 0xA0);
     expect(memory._buf[0]).toBe(0xA0);
   });
 
@@ -41,25 +41,8 @@ describe('Memory', () => {
     memory.initialize();
     expect(memory._buf[0]).toBe(0xF0);
 
-    memory._setAt(0, 0x200);
+    memory.setAt(0, 0x200);
     expect(memory._buf[0]).toBe(0x0);
-  });
-
-  it('returns the opcode at given PC', () => {
-    memory.initialize();
-    memory.loadProgram(demoProgram);
-
-    expect(memory.opCode(0x200)).toBe(0x00E0);
-  });
-
-  it('returns the arguments for a given opcode', () => {
-    const nnnOpCode = 0x1201;
-    const nOpCode = 0;
-    const xOpCode = 0;
-    const kkOpCode = 0;
-
-    expect(memory.opArguments(nnnOpCode).nnn).toBe(0x201);
-    //TODO finish tests
   });
 
   describe('Stack', () => {

@@ -43,11 +43,11 @@ const memory = {
     }
   },
 
-  _setAt: function (offset, value) {
+  setAt: function (offset, value) {
     this._buf[offset] = value;
   },
 
-  _getAt: function (offset) {
+  getAt: function (offset) {
     return this._buf[offset];
   },
 
@@ -67,20 +67,6 @@ const memory = {
     return this._buf.length;
   },
 
-  opCode: function (pc) {
-    return this._getAt(pc) << 8 | this._getAt(pc + 1);
-  },
-
-  opArguments: function (opCode) {
-    return {
-      nnn: (opCode & 0x0FFF),
-      n: (opCode & 0x000F),
-      x: (opCode & 0x0F00) >> 8,
-      y: (opCode & 0x00F0) >> 4,
-      kk: (opCode & 0x00FF)
-    };
-  },
-
   stack: {
     memParent: null,
     pointer: 0x0,
@@ -93,8 +79,8 @@ const memory = {
       const firstByte = (value & 0xFF00) >> 4;
       const secondByte = value & 0x00FF;
 
-      this.memParent._setAt(this.pointer, firstByte);
-      this.memParent._setAt(this.pointer + 1, secondByte);
+      this.memParent.setAt(this.pointer, firstByte);
+      this.memParent.setAt(this.pointer + 1, secondByte);
 
       this.pointer += 2;
     },
@@ -106,8 +92,8 @@ const memory = {
 
       this.pointer -= 2;
 
-      const firstByte = this.memParent._getAt(this.pointer) << 4;
-      const secondByte = this.memParent._getAt(this.pointer + 1);
+      const firstByte = this.memParent.getAt(this.pointer) << 4;
+      const secondByte = this.memParent.getAt(this.pointer + 1);
 
       return firstByte | secondByte;
     },
