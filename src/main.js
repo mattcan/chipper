@@ -19,7 +19,8 @@ const init = function (program) {
   cpu.initialize(program);
 };
 
-const main = function (program) {
+const main = function (program, logger) {
+  logger.log('We made it');
   init(program);
   cpu.run();
 

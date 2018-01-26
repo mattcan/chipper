@@ -6,6 +6,7 @@
 
 const main = require('./src/main');
 const disassembler = require('./src/chip8-disassembly');
+const Logger = require('./src/logger');
 const fs = require('fs');
 
 const FILE_PATH_POSITION = 3;
@@ -24,8 +25,11 @@ try {
   process.exit(2);
 }
 
+const pathParts = process.argv[FILE_PATH_POSITION].split('/');
+const logger = new Logger(pathParts[pathParts.length - 1].replace('.ch8',''));
+
 switch (process.argv[2]) {
-  case 'vm': main(fileData); break;
+  case 'vm': main(fileData, logger); break;
   case 'ds':
   case 'disassemble': disassembler(fileData); break;
   default: console.log('fudge'); break;
