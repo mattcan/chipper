@@ -25,8 +25,8 @@ module.exports = {
 
     this._instructions = instructions.initialize(this);
 
-    this._memory = memory.initialize();
-    this._memory.loadProgram(program);
+    memory.initialize();
+    memory.loadProgram(program);
 
     this._sb = screenBuffer.initialize();
     this._display = display.initialize(this._sb);
@@ -47,7 +47,7 @@ module.exports = {
 
   decode: function () {
     const pc = this.pc.get();
-    const opcode = this._memory.getAt(pc) << 8 | this._memory.getAt(pc + 1);
+    const opcode = memory.getAt(pc) << 8 | memory.getAt(pc + 1);
     return {
       code: opcode,
       args: {
@@ -195,7 +195,7 @@ module.exports = {
   },
 
   getMemory: function () {
-    return this._memory;
+    return memory;
   },
 
   getScreenBuffer: function () {

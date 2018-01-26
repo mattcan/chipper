@@ -7,7 +7,7 @@
     "prepush": "npm test",
     "start": "node chip8.js",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --coverage --watchAll",
     "update-contrib": "weallcontribute -o .github/CONTRIBUTING.md && git add .github/CONTRIBUTING.md"
   },
   "repository": {
