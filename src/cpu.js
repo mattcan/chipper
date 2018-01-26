@@ -15,7 +15,8 @@ const CLOCK_SPEED = 60; // Hz
 module.exports = {
 
   // Create all the private variables
-  initialize: function (program) {
+  initialize: function (program, logger) {
+    logger.log('Initializing CPU', { programSize: program.length })
     this.register._vReg = Buffer.alloc(16);
     this._iReg = Buffer.alloc(2);
     this._sound = Buffer.alloc(1);
@@ -25,19 +26,32 @@ module.exports = {
 
     this._instructions = instructions.initialize(this);
 
-    memory.initialize();
+    memory.initialize(logger);
     memory.loadProgram(program);
 
     this._sb = screenBuffer.initialize();
     this._display = display.initialize(this._sb);
+
+    this._logger = logger;
+
+    this._logger.log('CPU Initialized', {
+      vReg: this.register._vReg,
+      iReg: this._iReg,
+      sound: this._sound,
+      halt: this._halt,
+      pointer: this.pc._pointer
+    });
   },
 
   run: function () {
     const self = this;
 
+    this._logger.log('Screen buffer starting state', this._sb.currentState());
+
     const tick = function () {
       return setInterval(function () {
         self.execute(self.decode());
+        self._logger.log('Pre-render buffer', self._sb.currentState());
         self._display.render();
       }, 1000 / CLOCK_SPEED);
     };

@@ -25,7 +25,7 @@ const closeFile = (fd) => {
 
 const writeLine = (fd, line) => {
   return new Promise((resolve, reject) => {
-    fs.write(fd, line, (err, writtent, string) => {
+    fs.write(fd, `${line}\n`, (err, writtent, string) => {
       if (err) { return reject(err); }
       return resolve(string);
     });
@@ -39,11 +39,20 @@ class Logger {
   }
 
   _formatFileName (programName) {
-    return `${(new Date()).toISOString()}-${programName}`;
+    const dateString = `${(new Date()).toISOString()}`
+      .replace(/\-/g, '')
+      .replace(/\:/g, '')
+      .replace(/\./g, '');
+
+    return `${dateString}_${programName}`;
   }
 
   _line (message, details) {
-    return `${(new Date()).toTimeString()} - ${message} - ${JSON.stringify(details)}`;
+    const time = Date.now();
+    const data = JSON.stringify(details);
+    const divider = '---';
+
+    return `[${time}]: ${message}\n${data}\n${divider}`;
   }
 
   async log(message, details = {}) {

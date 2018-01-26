@@ -51,11 +51,14 @@ const memory = {
     return this._buf[offset];
   },
 
-  initialize: function () {
+  initialize: function (logger) {
     this._buf = Buffer.alloc(MAX_MEMORY_SIZE);
     this._loadToMemory(FONT_SPRITES);
     this.stack.memParent = this;
     this.stack.pointer = STACK_POINTER_START;
+    this._logger = logger;
+
+    this._logger.log('Memory initialized', { sp: this.stack.pointer });
   },
 
   loadProgram: function (program) {

@@ -6,6 +6,8 @@
 const cpu = require('../src/cpu');
 const OutOfBounds = require('../src/exceptions/OutOfBounds');
 
+const logger = { log: jest.fn() };
+
 jest.mock('../src/memory', () => ({
   initialize: jest.fn(),
   loadProgram: jest.fn()
@@ -18,7 +20,7 @@ describe('CPU', () => {
     jest.resetModules();
     memory = require('../src/memory');
 
-    cpu.initialize();
+    cpu.initialize([], logger);
   })
 
   it('will initialize registers', () => {

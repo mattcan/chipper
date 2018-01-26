@@ -14,14 +14,14 @@ const setupStdin = function () {
   input.handleKeyUp();
 }
 
-const init = function (program) {
+const init = function (program, logger) {
   setupStdin();
-  cpu.initialize(program);
+  cpu.initialize(program, logger);
 };
 
 const main = function (program, logger) {
   logger.log('We made it');
-  init(program);
+  init(program, logger);
   cpu.run();
 
   /*

@@ -10,10 +10,12 @@ const demoProgram = Buffer.from([
   0x00, 0xE0, 0x12, 0x00
 ]);
 
+const logger = { log: jest.fn() };
+
 describe('Memory', () => {
 
   it('is initialized', () => {
-    memory.initialize();
+    memory.initialize(logger);
     expect(memory._buf.length).toBe(4096);
     expect(memory._buf[0]).not.toBe(0x00);
     expect(memory._buf[0x50]).toBe(0x00);
@@ -30,7 +32,7 @@ describe('Memory', () => {
   });
 
   it('can set a byte at specific location', () => {
-    memory.initialize();
+    memory.initialize(logger);
     expect(memory._buf[0]).toBe(0xF0);
 
     memory.setAt(0, 0xA0);
@@ -38,7 +40,7 @@ describe('Memory', () => {
   });
 
   it('fails when setting more than a byte', () => {
-    memory.initialize();
+    memory.initialize(logger);
     expect(memory._buf[0]).toBe(0xF0);
 
     memory.setAt(0, 0x200);
@@ -48,19 +50,19 @@ describe('Memory', () => {
   describe('Stack', () => {
 
     it('is empty after initialization', () => {
-      memory.initialize();
+      memory.initialize(logger);
       expect(memory.stack.isEmpty()).toBe(true);
     });
 
     it('can push a value', () => {
-      memory.initialize();
+      memory.initialize(logger);
       memory.stack.push(0x201);
 
       expect(memory._buf[0x1DE]).toBe(0x20);
     });
 
     it('throws an error when pushing more than 16 values', () => {
-      memory.initialize();
+      memory.initialize(logger);
       for(let i = 0; i < 16; i += 1) {
         memory.stack.push(0x20 | i);
       }
@@ -71,7 +73,7 @@ describe('Memory', () => {
     });
 
     it('returns the last item placed onto the stack', () => {
-      memory.initialize();
+      memory.initialize(logger);
       memory.stack.push(0x231);
       expect(memory._buf[0x1DE]).toBe(0x20);
       expect(memory._buf[0x1DF]).toBe(0x31);
@@ -81,7 +83,7 @@ describe('Memory', () => {
     });
 
     it('throws an error when popping an empty array', () => {
-      memory.initialize();
+      memory.initialize(logger);
       expect(function () {
         memory.stack.pop();
       }).toThrowError(OutOfBounds);
