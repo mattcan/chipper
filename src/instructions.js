@@ -7,6 +7,7 @@
 module.exports = {
   initialize: function (cpu) {
     this._cpu = cpu;
+    this._cpu.getLogger().log('Instructions ready', {});
     return this;
   },
 
@@ -81,12 +82,19 @@ module.exports = {
 
   draw: function (x, y, nibble) {
 
+    this._cpu.getLogger().log('Drawing', { x, y, nibble });
+
     const getSprite = (baseAddress, startByte, mem) => {
+      this._cpu.getLogger().log('Get sprite', {
+        baseAddress: baseAddress.toString(16),
+        startByte: startByte.toString(16),
+        memAt: mem.getAt(baseAddress).toString(16)
+      });
       const sprite = [];
 
       for (i = 0; i < startByte; i++) {
         sprite[i] = [];
-        spr = mem[baseAddress + i];
+        spr = mem.getAt(baseAddress + i);
         for (j = 0; j < 8; j++) {
           if ((spr & 0x80) > 0) {
             sprite[i][j] = spr;

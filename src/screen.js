@@ -9,18 +9,23 @@ const screenBuffer = function () {
   const buffer = [];
   const verticalPixels = 32;
   const horizontalPixels = 64;
+  let Logger;
 
-  const initialize = function () {
+  const initialize = function (logger) {
     reset();
+    Logger = logger;
     return this;
   };
 
   // Returns true when toggling off to signify collision
   const toggle = function (x, y) {
+    Logger.log('Toggling', { x, y });
     if (buffer[x][y] === 0) {
+      Logger.log('Toggling, new value is 1', {});
       buffer[x][y] = 1;
       return false;
     } else {
+      Logger.log('Toggling, new value is 0', {});
       buffer[x][y] = 0;
       return true;
     }
@@ -48,6 +53,8 @@ const screenBuffer = function () {
   const drawSprite = (coords, sprite) => {
     const {x, y} = coords;
     let collision = false;
+
+    Logger.log('Drawing', { coords, sprite });
 
     for (let rowIdx = 0; rowIdx < sprite.length; rowIdx += 1) {
       const row = sprite[rowIdx];

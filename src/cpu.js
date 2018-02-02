@@ -23,16 +23,13 @@ module.exports = {
     this._halt = Buffer.alloc(1);
     this.pc._pointer = PROGRAM_START;
     this._tickHandler = undefined;
-
-    this._instructions = instructions.initialize(this);
+    this._logger = logger;
 
     memory.initialize(logger);
     memory.loadProgram(program);
 
-    this._sb = screenBuffer.initialize();
+    this._sb = screenBuffer.initialize(logger);
     this._display = display.initialize(this._sb);
-
-    this._logger = logger;
 
     this._logger.log('CPU Initialized', {
       vReg: this.register._vReg,
@@ -41,6 +38,8 @@ module.exports = {
       halt: this._halt,
       pointer: this.pc._pointer
     });
+
+    this._instructions = instructions.initialize(this);
   },
 
   run: function () {
@@ -58,6 +57,8 @@ module.exports = {
 
     this._tickHandler = tick();
   },
+
+  getLogger: function () { return this._logger; },
 
   decode: function () {
     const pc = this.pc.get();

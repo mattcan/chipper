@@ -16,7 +16,8 @@ jest.mock('../src/cpu', () => ({
     get: jest.fn(),
     next: jest.fn()
   },
-  getMemory: jest.fn()
+  getMemory: jest.fn(),
+  getLogger: jest.fn(() => ({ log: jest.fn() }))
 }));
 
 describe('Instructions', () => {

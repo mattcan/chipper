@@ -4,6 +4,7 @@
  * Copyright (C) 2017  Matthew Cantelon
  **/
 const screen = require('../src/screen');
+const logger = { log: jest.fn() };
 
 describe('ScreenBuffer', () => {
 
@@ -14,7 +15,7 @@ describe('ScreenBuffer', () => {
 
   it('is initialized', () => {
     const screenBuffer = screen.screenBuffer();
-    screenBuffer.initialize();
+    screenBuffer.initialize(logger);
 
     const buffer = screenBuffer.currentState();
     expect(buffer.length).toBe(32);
@@ -27,7 +28,7 @@ describe('ScreenBuffer', () => {
   describe('Toggling', () => {
     it('toggles 0,0 to 1 then to 0', () => {
       const sb = screen.screenBuffer();
-      sb.initialize();
+      sb.initialize(logger);
       expect(sb.currentState()[0][0]).toBe(0);
 
       sb.toggle(0,0);
