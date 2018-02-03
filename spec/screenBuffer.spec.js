@@ -25,6 +25,50 @@ describe('ScreenBuffer', () => {
     }
   });
 
+  describe('drawSprite', () => {
+    let sb;
+    beforeEach(() => {
+      sb = screen.screenBuffer();
+      sb.initialize(logger);
+    });
+
+    it('should set 0,0 to active', () => {
+      let state = sb.currentState();
+      expect(state[0][0]).toBe(0);
+
+      const hasCollided = sb.drawSprite({ x: 0, y: 0 }, [[1]]);
+      state = sb.currentState();
+      expect(state[0][0]).toBe(1);
+      expect(hasCollided).toBe(false);
+    });
+
+    it('should draw at 0,0 and 1,0', () => {
+      let state = sb.currentState();
+      expect(state[0][0]).toBe(0);
+      expect(state[0][1]).toBe(0);
+
+      const hasCollided = sb.drawSprite({ x: 0, y: 0 }, [[1],[1]]);
+      expect(state[0][0]).toBe(1);
+      expect(state[0][1]).toBe(1);
+      expect(hasCollided).toBe(false);
+    });
+
+    it('should have a collision on the second draw at 0,0', () => {
+      let state = sb.currentState();
+      expect(state[0][0]).toBe(0);
+
+      let hasCollided = sb.drawSprite({ x: 0, y: 0 }, [[1]]);
+      state = sb.currentState();
+      expect(state[0][0]).toBe(1);
+      expect(hasCollided).toBe(false);
+
+      hasCollided = sb.drawSprite({ x: 0, y: 0 }, [[1]]);
+      state = sb.currentState();
+      expect(state[0][0]).toBe(0);
+      expect(hasCollided).toBe(true);
+    });
+  });
+
   describe('Toggling', () => {
     it('toggles 0,0 to 1 then to 0', () => {
       const sb = screen.screenBuffer();

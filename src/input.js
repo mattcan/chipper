@@ -22,16 +22,14 @@ const keymap = {
     'b': 0x10
 };
 
-const input = function () {
+const input = function (logger) {
   let lastKeyPress;
   let currentlyPressed;
+  const Logger = logger;
 
   const handleKeyDown = function (str, key) {
-    console.log('a key was pressed');
-
     // quit
     if (key.ctrl && key.name === 'c') {
-      console.log('quit keys pressed');
       process.exit();
     }
 

@@ -19,15 +19,19 @@ const screenBuffer = function () {
 
   // Returns true when toggling off to signify collision
   const toggle = function (x, y) {
-    Logger.log('Toggling', { x, y });
-    if (buffer[x][y] === 0) {
-      Logger.log('Toggling, new value is 1', {});
-      buffer[x][y] = 1;
-      return false;
-    } else {
-      Logger.log('Toggling, new value is 0', {});
-      buffer[x][y] = 0;
-      return true;
+    try {
+      if (buffer[y][x] === 0) {
+        Logger.log('Toggling, new value is 1', {x, y});
+        buffer[y][x] = 1;
+        return false;
+      } else {
+        Logger.log('Toggling, new value is 0', {x,y});
+        buffer[y][x] = 0;
+        return true;
+      }
+    } catch (e) {
+      Logger.log('Error toggling', { msg: e.message, x, y });
+      // Keep things moving to get those sweet, sweet logs
     }
   };
 
@@ -51,6 +55,10 @@ const screenBuffer = function () {
   // TODO screen wrapping
   // Currently this will blow the fuck up
   const drawSprite = (coords, sprite) => {
+    if (!Array.isArray(sprite) || sprite.length === 0) {
+      throw new Error('Drawing an empty sprite? For real?');
+    }
+
     const {x, y} = coords;
     let collision = false;
 
@@ -60,8 +68,11 @@ const screenBuffer = function () {
       const row = sprite[rowIdx];
 
       for (let colIdx = 0; colIdx < row.length; colIdx += 1) {
-        const offsetX = rowIdx + x;
-        const offsetY = colIdx + y;
+        let offsetX = rowIdx + x;
+        let offsetY = colIdx + y;
+
+        offsetX = offsetX > horizontalPixels ? offsetX - horizontalPixels : offsetX;
+        offsetY = offsetY > verticalPixels ? offsetY - verticalPixels : offsetY;
 
         const hasCollided = toggle(offsetX, offsetY);
         if (hasCollided) { collision = true; }
